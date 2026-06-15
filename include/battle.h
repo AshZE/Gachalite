@@ -28,6 +28,7 @@
 #include "move.h"
 #include "random.h" // for rng_value_t
 #include "trainer_slide.h"
+extern enum Ability gRogueRewardAbility;
 
 // Used to exclude moves learned temporarily by Transform or Mimic
 #define MOVE_IS_PERMANENT(battler, moveSlot)                        \

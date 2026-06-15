@@ -297,8 +297,8 @@ bool32 MoveRecordedBattleToSaveData(void)
 
     for (i = 0; i < PARTY_SIZE; i++)
     {
-        battleSave->playerParty[i] = sSavedPlayerParty[i];
-        battleSave->opponentParty[i] = sSavedOpponentParty[i];
+        battleSave->playerParty[i] = sSavedPlayerParty[i].box;
+        battleSave->opponentParty[i] = sSavedOpponentParty[i].box;
     }
 
     for (i = 0; i < MAX_LINK_PLAYERS; i++)
@@ -497,9 +497,10 @@ void SetPartiesFromRecordedSave(struct RecordedBattleSave *src)
     ZeroEnemyPartyMons();
     for (i = 0; i < PARTY_SIZE; i++)
     {
-        gPlayerParty[i] = src->playerParty[i];
-        gEnemyParty[i] = src->opponentParty[i];
+        BoxMonToMon(&src->playerParty[i], &gPlayerParty[i]);
+        BoxMonToMon(&src->opponentParty[i], &gEnemyParty[i]);
     }
+
 }
 
 void SetVariablesForRecordedBattle(struct RecordedBattleSave *src)

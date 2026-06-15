@@ -62,6 +62,9 @@ struct Pokemon
 
     struct String ability;
     int ability_line;
+    struct String extra_abilities[3];
+    int extra_ability_lines[3];
+    int extra_abilities_count;
 
     int level;
     int level_line;
@@ -1486,7 +1489,7 @@ static bool parse_trainer(struct Parser *p, const struct Parsed *parsed, struct 
                 pokemon->tera_type_line = value.location.line;
                 pokemon->tera_type = token_string(&value);
             }
-            else if (is_literal_token(&key, "Tags"))
+else if (is_literal_token(&key, "Tags"))
             {
                 if (pokemon->tags_line)
                     any_error = !set_show_parse_error(p, key.location, "duplicate 'Tags'");
@@ -1494,9 +1497,21 @@ static bool parse_trainer(struct Parser *p, const struct Parsed *parsed, struct 
                 if (!token_human_identifiers(p, &value, pokemon->tags, &pokemon->tags_n, MAX_MON_TAGS))
                     any_error = !show_parse_error(p);
             }
+            else if (is_literal_token(&key, "Extra Abilities"))
+            {
+                if (pokemon->extra_abilities_count >= 3)
+                    any_error = !set_show_parse_error(p, key.location, "too many 'Extra Abilities' (max 3)");
+                else
+                {
+                    int idx = pokemon->extra_abilities_count;
+                    pokemon->extra_ability_lines[idx] = value.location.line;
+                    pokemon->extra_abilities[idx] = token_string(&value);
+                    pokemon->extra_abilities_count++;
+                }
+            }
             else
             {
-                any_error = !set_show_parse_error(p, key.location, "expected one of 'EVs', 'IVs', 'Ability', 'Level', 'Ball', 'Happiness', 'Nature', 'Shiny', 'Dynamax Level', 'Gigantamax', or 'Tera Type'");
+                any_error = !set_show_parse_error(p, key.location, "expected one of 'EVs', 'IVs', 'Ability', 'Extra Abilities', 'Level', 'Ball', 'Happiness', 'Nature', 'Shiny', 'Dynamax Level', 'Gigantamax', or 'Tera Type'");
             }
         }
 
@@ -2033,7 +2048,27 @@ static void fprint_trainers(const char *output_path, FILE *f, struct Parsed *par
                 fprint_constant(f, "ABILITY", pokemon->ability);
                 fprintf(f, ",\n");
             }
+            if (pokemon->extra_abilities_count > 0)
+            {
+                fprintf(f, "            .extraAbilities = {\n");
+                for (int ea = 0; ea < 3; ea++)
+                {
+                    if (ea < pokemon->extra_abilities_count)
+                    {
+                        fprintf(f, "#line %d\n", pokemon->extra_ability_lines[ea]);
+                        fprintf(f, "                ");
+                        fprint_constant(f, "ABILITY", pokemon->extra_abilities[ea]);
+                        fprintf(f, ",\n");
+                    }
+                    else
+                    {
+                        fprintf(f, "                ABILITY_NONE,\n");
+                    }
+                }
+                fprintf(f, "            },\n");
+            }
 
+            if (pokemon->level_line)
             if (pokemon->level_line)
             {
                 fprintf(f, "#line %d\n", pokemon->level_line);

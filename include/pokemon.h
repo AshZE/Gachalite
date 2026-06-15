@@ -272,6 +272,7 @@ struct BoxPokemon
     u16 hpLost:14; // 16383 HP.
     u16 shinyModifier:1;
     u16 unused_1E:1;
+    enum Ability extraAbilities[MAX_EXTRA_ABILITIES];
 
     union
     {
@@ -352,6 +353,7 @@ struct BattlePokemon
     /*0x17*/ u32 abilityNum:2;
     /*0x18*/ s8 statStages[NUM_BATTLE_STATS];
     /*0x20*/ enum Ability ability;
+             enum Ability extraAbilities[MAX_EXTRA_ABILITIES];
     /*0x22*/ enum Type types[3];
     /*0x25*/ u8 pp[MAX_MON_MOVES];
     /*0x29*/ u16 hp;

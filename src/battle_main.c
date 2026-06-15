@@ -80,6 +80,7 @@
 #include "constants/weather.h"
 #include "cable_club.h"
 #include "test/test_runner_battle.h"
+enum Ability gRogueRewardAbility = ABILITY_NONE;
 
 extern const struct BgTemplate gBattleBgTemplates[];
 extern const struct WindowTemplate *const gBattleWindowTemplates[];

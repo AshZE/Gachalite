@@ -5049,6 +5049,134 @@ void ItemUseCB_AbilityPatch(u8 taskId, TaskFunc task)
 
 #define tState      data[0]
 #define tMonId      data[1]
+#define tItemSlot   data[2]
+#define tAbility    data[3]
+#define tOldFunc    4
+
+static const u8 sText_AbilityVial_Full[] = _("{STR_VAR_1} can't\ngain any more abilities!{PAUSE_UNTIL_PRESS}");
+static const u8 sText_AbilityVial_Ask[]  = _("Give {STR_VAR_1} the\nability {STR_VAR_2}?");
+static const u8 sText_AbilityVial_Done[] = _("{STR_VAR_1} gained\nthe ability {STR_VAR_2}!{PAUSE_UNTIL_PRESS}");
+
+void Task_AbilityVial(u8 taskId)
+{
+    s16 *data = gTasks[taskId].data;
+    u8 i;
+    enum Ability ability = (enum Ability)tAbility;
+
+    switch (tState)
+    {
+    case 0:
+        if (ability == ABILITY_NONE)
+        {
+            gPartyMenuUseExitCallback = FALSE;
+            PlaySE(SE_SELECT);
+            DisplayPartyMenuMessage(gText_WontHaveEffect, 1);
+            ScheduleBgCopyTilemapToVram(2);
+            gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+            return;
+        }
+        for (i = 0; i < MAX_EXTRA_ABILITIES; i++)
+        {
+            if (gPlayerParty[tMonId].box.extraAbilities[i] == ABILITY_NONE)
+                break;
+        }
+        if (i == MAX_EXTRA_ABILITIES)
+        {
+            gPartyMenuUseExitCallback = FALSE;
+            PlaySE(SE_SELECT);
+            GetMonNickname(&gPlayerParty[tMonId], gStringVar1);
+            StringExpandPlaceholders(gStringVar4, sText_AbilityVial_Full);
+            DisplayPartyMenuMessage(gStringVar4, 1);
+            ScheduleBgCopyTilemapToVram(2);
+            gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+            return;
+        }
+        gPartyMenuUseExitCallback = TRUE;
+        GetMonNickname(&gPlayerParty[tMonId], gStringVar1);
+        StringCopy(gStringVar2, gAbilitiesInfo[ability].name);
+        StringExpandPlaceholders(gStringVar4, sText_AbilityVial_Ask);
+        PlaySE(SE_SELECT);
+        DisplayPartyMenuMessage(gStringVar4, 1);
+        ScheduleBgCopyTilemapToVram(2);
+        tState++;
+        break;
+    case 1:
+        if (!IsPartyMenuTextPrinterActive())
+        {
+            PartyMenuDisplayYesNoMenu();
+            tState++;
+        }
+        break;
+    case 2:
+        switch (Menu_ProcessInputNoWrapClearOnChoose())
+        {
+        case 0:
+            tState++;
+            break;
+        case 1:
+        case MENU_B_PRESSED:
+            gPartyMenuUseExitCallback = FALSE;
+            PlaySE(SE_SELECT);
+            ScheduleBgCopyTilemapToVram(2);
+            ClearStdWindowAndFrameToTransparent(6, 0);
+            ClearWindowTilemap(6);
+            DisplayPartyMenuStdMessage(5);
+            gTasks[taskId].func = (void *)GetWordTaskArg(taskId, tOldFunc);
+            return;
+        }
+        break;
+    case 3:
+        for (i = 0; i < MAX_EXTRA_ABILITIES; i++)
+        {
+            if (gPlayerParty[tMonId].box.extraAbilities[i] == ABILITY_NONE)
+            {
+                gPlayerParty[tMonId].box.extraAbilities[i] = ability;
+                break;
+            }
+        }
+        PlaySE(SE_USE_ITEM);
+        GetMonNickname(&gPlayerParty[tMonId], gStringVar1);
+        StringCopy(gStringVar2, gAbilitiesInfo[ability].name);
+        StringExpandPlaceholders(gStringVar4, sText_AbilityVial_Done);
+        DisplayPartyMenuMessage(gStringVar4, 1);
+        ScheduleBgCopyTilemapToVram(2);
+        RemoveBagItemFromSlot(&gBagPockets[POCKET_ITEMS], tItemSlot, 1);
+        tState++;
+        break;
+    case 4:
+        if (!IsPartyMenuTextPrinterActive())
+            tState++;
+        break;
+    case 5:
+        gTasks[taskId].func = Task_ClosePartyMenu;
+        break;
+    }
+}
+
+extern u32 gAbilityVialBagSlot;
+
+void ItemUseCB_AbilityVial(u8 taskId, TaskFunc task)
+{
+    s16 *data = gTasks[taskId].data;
+    u32 slotIndex = gAbilityVialBagSlot;
+    struct ItemSlot slot = BagPocket_GetSlotData(&gBagPockets[POCKET_ITEMS], slotIndex);
+
+    tState = 0;
+    tMonId = gPartyMenu.slotId;
+    tItemSlot = (s16)slotIndex;
+    tAbility = (s16)slot.metadata;
+    SetWordTaskArg(taskId, tOldFunc, (uintptr_t)(gTasks[taskId].func));
+    gTasks[taskId].func = Task_AbilityVial;
+}
+
+#undef tState
+#undef tMonId
+#undef tItemSlot
+#undef tAbility
+#undef tOldFunc
+
+#define tState      data[0]
+#define tMonId      data[1]
 #define tOldNature  data[2]
 #define tNewNature  data[3]
 #define tOldFunc    4

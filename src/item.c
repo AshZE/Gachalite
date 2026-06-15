@@ -65,6 +65,7 @@ static inline struct ItemSlot NONNULL BagPocket_GetSlotDataGeneric(struct BagPoc
     return (struct ItemSlot) {
         .itemId = pocket->itemSlots[pocketPos].itemId,
         .quantity = pocket->itemSlots[pocketPos].quantity ^ gSaveBlock2Ptr->encryptionKey,
+        .metadata = pocket->itemSlots[pocketPos].metadata,
     };
 }
 
@@ -73,6 +74,7 @@ static inline struct ItemSlot NONNULL BagPocket_GetSlotDataPC(struct BagPocket *
     return (struct ItemSlot) {
         .itemId = pocket->itemSlots[pocketPos].itemId,
         .quantity = pocket->itemSlots[pocketPos].quantity,
+        .metadata = pocket->itemSlots[pocketPos].metadata,
     };
 }
 
@@ -80,12 +82,14 @@ static inline void NONNULL BagPocket_SetSlotDataGeneric(struct BagPocket *pocket
 {
     pocket->itemSlots[pocketPos].itemId = newSlot.itemId;
     pocket->itemSlots[pocketPos].quantity = newSlot.quantity ^ gSaveBlock2Ptr->encryptionKey;
+    pocket->itemSlots[pocketPos].metadata = newSlot.metadata;
 }
 
 static inline void NONNULL BagPocket_SetSlotDataPC(struct BagPocket *pocket, u32 pocketPos, struct ItemSlot newSlot)
 {
     pocket->itemSlots[pocketPos].itemId = newSlot.itemId;
     pocket->itemSlots[pocketPos].quantity = newSlot.quantity;
+    pocket->itemSlots[pocketPos].metadata = newSlot.metadata;
 }
 
 struct ItemSlot NONNULL BagPocket_GetSlotData(struct BagPocket *pocket, u32 pocketPos)
@@ -281,7 +285,9 @@ u32 GetFreeSpaceForItemInBag(enum Item itemId)
 static inline bool32 NONNULL CheckSlotAndUpdateCount(struct BagPocket *pocket, enum Item itemId, u32 pocketPos, u32 *nextPocketPos, u16 *count, u16 *tempPocketSlotQuantities)
 {
     struct ItemSlot tempItem = BagPocket_GetSlotData(pocket, pocketPos);
-    if (tempItem.itemId == ITEM_NONE || tempItem.itemId == itemId)
+    // Ability Vials never stack — each vial is its own slot
+    bool32 isAbilityVial = (itemId == ITEM_ABILITY_VIAL);
+    if (tempItem.itemId == ITEM_NONE || (tempItem.itemId == itemId && !isAbilityVial))
     {
         // The quantity already at the slot - zero if an empty slot
         if (tempItem.itemId == ITEM_NONE)
@@ -353,6 +359,27 @@ bool32 AddBagItem(enum Item itemId, u16 count)
         return AddPyramidBagItem(itemId, count);
 
     return BagPocket_AddItem(&gBagPockets[GetItemPocket(itemId)], itemId, count);
+}
+
+bool32 AddAbilityVialToBag(enum Ability ability)
+{
+    u32 i;
+    struct BagPocket *pocket = &gBagPockets[POCKET_ITEMS];
+
+    for (i = 0; i < pocket->capacity; i++)
+    {
+        struct ItemSlot slot = BagPocket_GetSlotData(pocket, i);
+        if (slot.itemId == ITEM_NONE)
+        {
+            BagPocket_SetSlotData(pocket, i, (struct ItemSlot) {
+                .itemId = ITEM_ABILITY_VIAL,
+                .quantity = 1,
+                .metadata = (u16)ability,
+            });
+            return TRUE;
+        }
+    }
+    return FALSE;
 }
 
 static bool32 NONNULL BagPocket_RemoveItem(struct BagPocket *pocket, enum Item itemId, u16 count)
@@ -831,8 +858,23 @@ u32 GetItemHoldEffectParam(enum Item itemId)
     return gItemsInfo[SanitizeItemId(itemId)].holdEffectParam;
 }
 
+static u8 sAbilityVialDescription[64];
+static const u8 sText_AbilityVialContains[] = _("Contains the\nability: ");
+
 const u8 *GetItemDescription(enum Item itemId)
 {
+    return gItemsInfo[SanitizeItemId(itemId)].description;
+}
+
+const u8 *GetItemDescriptionWithMetadata(enum Item itemId, u16 metadata)
+{
+    if (itemId == ITEM_ABILITY_VIAL && metadata != ABILITY_NONE)
+    {
+        u8 *ptr = sAbilityVialDescription;
+        ptr = StringCopy(ptr, sText_AbilityVialContains);
+        ptr = StringCopy(ptr, gAbilitiesInfo[metadata].name);
+        return sAbilityVialDescription;
+    }
     return gItemsInfo[SanitizeItemId(itemId)].description;
 }
 

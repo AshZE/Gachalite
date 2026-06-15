@@ -5777,3 +5777,84 @@ bool8 CheckAddCoins(void)
     else
         return TRUE;
 }
+
+// ============================================================
+
+// ============================================================
+// ROGUELITE GACHA SYSTEM — thin stubs, logic lives in rogue_system.c
+// ============================================================
+#include "script_pokemon_util.h"
+#include "rogue_system.h"
+
+void Special_RollAbilityGacha(void)
+{
+    enum Ability result = Rogue_RollAbility();
+    gRogueRewardAbility = result;
+    AddAbilityVialToBag(result);
+    RemoveBagItem(ITEM_ABILITY_SHARD, 1);
+}
+
+void Special_RollPokemonGacha(void)
+{
+    u16 species = Rogue_RollPokemon();
+    ScriptGiveMon(species, 5, ITEM_NONE);
+    RemoveBagItem(ITEM_POKE_TOKEN, 1);
+    gSpecialVar_Result = species;
+}
+
+void Special_RollMoveGacha(void)
+{
+    u16 move = Rogue_RollMove();
+    RemoveBagItem(ITEM_MOVE_GEM, 1);
+    gSpecialVar_Result = move;
+}
+
+void Special_StartRogueRun(void)
+{
+    Rogue_StartRun();
+}
+
+void Special_EndRogueRun(void)
+{
+    Rogue_EndRun();
+}
+
+void Special_IsRunActive(void)
+{
+    gSpecialVar_Result = Rogue_IsRunActive();
+}
+
+void Special_InitFloor(void)
+{
+    Rogue_InitFloor();
+}
+
+void Special_OnBattleWon(void)
+{
+    Rogue_OnBattleWon();
+    // Returns TRUE if all encounters on this floor are done
+    gSpecialVar_Result = (Rogue_CheckEncountersRemaining() == 0) ? TRUE : FALSE;
+}
+
+void Special_AdvanceFloor(void)
+{
+    Rogue_AdvanceFloor();
+    // Returns TRUE if next floor is a boss floor (every 5th, 0-indexed: floor 4, 9, 14...)
+    gSpecialVar_Result = ((Rogue_GetCurrentFloor() % 5) == 4) ? TRUE : FALSE;
+}
+
+void Special_GetCurrentFloor(void)
+{
+    gSpecialVar_Result = Rogue_GetCurrentFloor();
+}
+
+void Special_CheckEncountersRemaining(void)
+{
+    gSpecialVar_Result = Rogue_CheckEncountersRemaining();
+}
+
+// Currency check — caller sets gSpecialVar_0x8004 to the item ID to check
+void Special_CheckCurrency(void)
+{
+    gSpecialVar_Result = CheckBagHasItem(gSpecialVar_0x8004, 1);
+}

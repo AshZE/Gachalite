@@ -98,6 +98,14 @@
 #define PSS_DATA_WINDOW_SKILLS_STATS_RIGHT 3 // Sp. Attack, Sp. Defense, Speed
 #define PSS_DATA_WINDOW_EXP 4 // Exp, next level
 
+// Dynamic fields for the Abilities page
+#define PSS_DATA_WINDOW_ABILITY_1_NAME 0
+#define PSS_DATA_WINDOW_ABILITY_1_DESC 1
+#define PSS_DATA_WINDOW_ABILITY_2_NAME 2
+#define PSS_DATA_WINDOW_ABILITY_2_DESC 3
+#define PSS_DATA_WINDOW_ABILITY_3_NAME 4
+#define PSS_DATA_WINDOW_ABILITY_3_DESC 5
+
 // Dynamic fields for the Battle Moves and Contest Moves pages.
 #define PSS_DATA_WINDOW_MOVE_NAMES 0
 #define PSS_DATA_WINDOW_MOVE_PP 1
@@ -166,6 +174,7 @@ static EWRAM_DATA struct PokemonSummaryScreenData
         u32 OTID; // 0x48
         enum Type teraType;
         u8 mintNature;
+        enum Ability extraAbilities[MAX_EXTRA_ABILITIES];
     } summary;
     u16 bgTilemapBuffers[PSS_PAGE_COUNT][2][0x400];
     u8 mode;
@@ -183,7 +192,7 @@ static EWRAM_DATA struct PokemonSummaryScreenData
     bool8 lockMovesFlag; // This is used to prevent the player from changing position of moves in a battle or when trading.
     u8 bgDisplayOrder; // Determines the order page backgrounds are loaded while scrolling between them
     bool8 hasRelearnableMoves;
-    u8 windowIds[8];
+    u8 windowIds[14];
     u8 spriteIds[SPRITE_ARR_ID_COUNT];
     s16 switchCounter; // Used for various switch statement cases that decompress/load graphics or Pokémon data
     u8 unk_filler4[6];
@@ -272,8 +281,10 @@ static void PrintEggOTID(void);
 static void PrintEggState(void);
 static void PrintEggMemo(void);
 static void Task_PrintSkillsPage(u8);
-static void PrintHeldItemName(void);
 static void PrintSkillsPageText(void);
+static void PrintHeldItemName(void);
+static void PrintAbilitiesPageText(void);
+static void Task_PrintAbilitiesPage(u8);
 static void PrintRibbonCount(void);
 static void BufferLeftColumnStats(void);
 static void PrintLeftColumnStats(void);
@@ -282,9 +293,9 @@ static void PrintRightColumnStats(void);
 static void PrintExpPointsNextLevel(void);
 static void PrintBattleMoves(void);
 static void Task_PrintBattleMoves(u8);
-static void PrintMoveNameAndPP(u8);
 static void PrintContestMoves(void);
 static void Task_PrintContestMoves(u8);
+static void PrintMoveNameAndPP(u8);
 static void PrintContestMoveDescription(u8);
 static void PrintMoveDetails(enum Move move);
 static void PrintNewMoveDetailsOrCancelText(void);
@@ -697,6 +708,34 @@ static const struct WindowTemplate sPageSkillsTemplate[] =
         .baseBlock = 561,
     },
 };
+static const struct WindowTemplate sPageAbilitiesTemplate[] =
+{
+    [PSS_DATA_WINDOW_ABILITY_1_NAME] = {
+        .bg = 0, .tilemapLeft = 11, .tilemapTop = 4,
+        .width = 18, .height = 2, .paletteNum = 6, .baseBlock = 700,
+    },
+    [PSS_DATA_WINDOW_ABILITY_1_DESC] = {
+        .bg = 0, .tilemapLeft = 11, .tilemapTop = 6,
+        .width = 18, .height = 2, .paletteNum = 6, .baseBlock = 736,
+    },
+    [PSS_DATA_WINDOW_ABILITY_2_NAME] = {
+        .bg = 0, .tilemapLeft = 11, .tilemapTop = 9,
+        .width = 18, .height = 2, .paletteNum = 6, .baseBlock = 772,
+    },
+    [PSS_DATA_WINDOW_ABILITY_2_DESC] = {
+        .bg = 0, .tilemapLeft = 11, .tilemapTop = 11,
+        .width = 18, .height = 2, .paletteNum = 6, .baseBlock = 808,
+    },
+    [PSS_DATA_WINDOW_ABILITY_3_NAME] = {
+        .bg = 0, .tilemapLeft = 11, .tilemapTop = 14,
+        .width = 18, .height = 2, .paletteNum = 6, .baseBlock = 844,
+    },
+    [PSS_DATA_WINDOW_ABILITY_3_DESC] = {
+        .bg = 0, .tilemapLeft = 11, .tilemapTop = 16,
+        .width = 18, .height = 2, .paletteNum = 6, .baseBlock = 880,
+    },
+};
+
 static const struct WindowTemplate sPageMovesTemplate[] = // This is used for both battle and contest moves
 {
     [PSS_DATA_WINDOW_MOVE_NAMES] = {
@@ -754,7 +793,8 @@ static void (*const sTextPrinterFunctions[])(void) =
     [PSS_PAGE_INFO] = PrintInfoPageText,
     [PSS_PAGE_SKILLS] = PrintSkillsPageText,
     [PSS_PAGE_BATTLE_MOVES] = PrintBattleMoves,
-    [PSS_PAGE_CONTEST_MOVES] = PrintContestMoves
+    [PSS_PAGE_CONTEST_MOVES] = PrintContestMoves,
+    [PSS_PAGE_ABILITIES] = PrintAbilitiesPageText,
 };
 
 static const TaskFunc sTextPrinterTasks[] =
@@ -762,7 +802,8 @@ static const TaskFunc sTextPrinterTasks[] =
     [PSS_PAGE_INFO] = Task_PrintInfoPage,
     [PSS_PAGE_SKILLS] = Task_PrintSkillsPage,
     [PSS_PAGE_BATTLE_MOVES] = Task_PrintBattleMoves,
-    [PSS_PAGE_CONTEST_MOVES] = Task_PrintContestMoves
+    [PSS_PAGE_CONTEST_MOVES] = Task_PrintContestMoves,
+    [PSS_PAGE_ABILITIES] = Task_PrintAbilitiesPage
 };
 
 static const u8 sText_Relearn[] = _("{START_BUTTON} RELEARN"); // future note: don't decap this, because it mimics the summary screen BG graphics which will not get decapped
@@ -1458,7 +1499,7 @@ static bool8 DecompressGraphics(void)
         sMonSummaryScreen->switchCounter++;
         break;
     case 5:
-        DecompressDataWithHeaderWram(gSummaryPage_ContestMoves_Tilemap, sMonSummaryScreen->bgTilemapBuffers[PSS_PAGE_CONTEST_MOVES][1]);
+        DecompressDataWithHeaderWram(gSummaryPage_Abilities_Tilemap, sMonSummaryScreen->bgTilemapBuffers[PSS_PAGE_ABILITIES][1]);
         sMonSummaryScreen->switchCounter++;
         break;
     case 6:
@@ -1530,6 +1571,8 @@ static bool8 ExtractMonDataToSummaryStruct(struct Pokemon *mon)
         sum->exp = GetMonData(mon, MON_DATA_EXP);
         sum->level = GetMonData(mon, MON_DATA_LEVEL);
         sum->abilityNum = GetMonData(mon, MON_DATA_ABILITY_NUM);
+        for (i = 0; i < MAX_EXTRA_ABILITIES; i++)
+            sum->extraAbilities[i] = mon->box.extraAbilities[i];
         sum->item = GetMonData(mon, MON_DATA_HELD_ITEM);
         sum->pid = GetMonData(mon, MON_DATA_PERSONALITY);
         sum->sanity = GetMonData(mon, MON_DATA_SANITY_IS_BAD_EGG);
@@ -3850,6 +3893,57 @@ static void PrintSkillsPageText(void)
     BufferRightColumnStats();
     PrintRightColumnStats();
     PrintExpPointsNextLevel();
+}
+
+static void PrintExtraAbilitySlot(u8 slot, u8 nameWindowId, u8 descWindowId)
+{
+    enum Ability ability = sMonSummaryScreen->summary.extraAbilities[slot];
+
+    if (ability == ABILITY_NONE)
+    {
+        // Print "Ability X" placeholder
+        u8 text[20];
+        u8 *ptr = text;
+        static const u8 sText_AbilityLabel[] = _("Ability ");
+        ptr = StringCopy(ptr, sText_AbilityLabel);
+        *ptr++ = CHAR_1 + slot; // '1', '2', '3'
+        *ptr = EOS;
+        PrintTextOnWindow(AddWindowFromTemplateList(sPageAbilitiesTemplate, nameWindowId), text, 0, 1, 0, 0);
+        PrintTextOnWindow(AddWindowFromTemplateList(sPageAbilitiesTemplate, descWindowId), gText_None, 0, 1, 0, 0);
+    }
+    else
+    {
+        PrintTextOnWindow(AddWindowFromTemplateList(sPageAbilitiesTemplate, nameWindowId), gAbilitiesInfo[ability].name, 0, 1, 0, 1);
+        PrintTextOnWindow(AddWindowFromTemplateList(sPageAbilitiesTemplate, descWindowId), gAbilitiesInfo[ability].description, 0, 1, 0, 0);
+    }
+}
+
+static void PrintAbilitiesPageText(void)
+{
+    PrintExtraAbilitySlot(0, PSS_DATA_WINDOW_ABILITY_1_NAME, PSS_DATA_WINDOW_ABILITY_1_DESC);
+    PrintExtraAbilitySlot(1, PSS_DATA_WINDOW_ABILITY_2_NAME, PSS_DATA_WINDOW_ABILITY_2_DESC);
+    PrintExtraAbilitySlot(2, PSS_DATA_WINDOW_ABILITY_3_NAME, PSS_DATA_WINDOW_ABILITY_3_DESC);
+}
+
+static void Task_PrintAbilitiesPage(u8 taskId)
+{
+    s16 *data = gTasks[taskId].data;
+    switch (data[0])
+    {
+    case 1:
+        PrintExtraAbilitySlot(0, PSS_DATA_WINDOW_ABILITY_1_NAME, PSS_DATA_WINDOW_ABILITY_1_DESC);
+        break;
+    case 2:
+        PrintExtraAbilitySlot(1, PSS_DATA_WINDOW_ABILITY_2_NAME, PSS_DATA_WINDOW_ABILITY_2_DESC);
+        break;
+    case 3:
+        PrintExtraAbilitySlot(2, PSS_DATA_WINDOW_ABILITY_3_NAME, PSS_DATA_WINDOW_ABILITY_3_DESC);
+        break;
+    case 4:
+        DestroyTask(taskId);
+        return;
+    }
+    data[0]++;
 }
 
 static void Task_PrintSkillsPage(u8 taskId)

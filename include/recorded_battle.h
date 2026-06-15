@@ -9,8 +9,8 @@
 
 struct RecordedBattleSave
 {
-    struct Pokemon playerParty[PARTY_SIZE];
-    struct Pokemon opponentParty[PARTY_SIZE];
+    struct BoxPokemon playerParty[PARTY_SIZE];
+    struct BoxPokemon opponentParty[PARTY_SIZE];
     u8 playersName[MAX_LINK_PLAYERS][PLAYER_NAME_LENGTH + 1];
     u8 playersGender[MAX_LINK_PLAYERS];
     u32 playersTrainerId[MAX_LINK_PLAYERS];

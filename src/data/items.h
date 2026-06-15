@@ -1648,6 +1648,56 @@ const struct ItemInfo gItemsInfo[] =
         .iconPic = gItemIcon_AbilityPatch,
         .iconPalette = gItemIconPalette_AbilityPatch,
     },
+    
+    [ITEM_ABILITY_VIAL] =
+    {
+        .name = ITEM_NAME("Ability Vial"),
+        .price = 0,
+        .description = COMPOUND_STRING("Contains a\nhidden ability."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_AbilityVial,
+        .iconPic = gItemIcon_AbilityCapsule,
+        .iconPalette = gItemIconPalette_AbilityCapsule,
+    },
+
+    [ITEM_POKE_TOKEN] =
+    {
+        .name = ITEM_NAME("PokeToken"),
+        .price = 0,
+        .description = COMPOUND_STRING("Spend at the\nPokemon Gacha."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_BAG_MENU,
+        .iconPic = gItemIcon_RareCandy,
+        .iconPalette = gItemIconPalette_RareCandy,
+    },
+
+    [ITEM_ABILITY_SHARD] =
+    {
+        .name = ITEM_NAME("Ability Shard"),
+        .price = 0,
+        .description = COMPOUND_STRING("Spend at the\nAbility Gacha."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_BAG_MENU,
+        .iconPic = gItemIcon_StarPiece,
+        .iconPalette = gItemIconPalette_Star,
+    },
+
+    [ITEM_MOVE_GEM] =
+    {
+        .name = ITEM_NAME("Move Gem"),
+        .price = 0,
+        .description = COMPOUND_STRING("Spend at the\nMove Gacha."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_BAG_MENU,
+        .iconPic = gItemIcon_Nugget,
+        .iconPalette = gItemIconPalette_Nugget,
+    },
+
 
 // Mints
 

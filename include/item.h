@@ -184,7 +184,9 @@ struct ItemSlot BagPocket_GetSlotData(struct BagPocket *pocket, u32 pocketPos);
 
 static inline void BagPocket_SetSlotItemIdAndCount(struct BagPocket *pocket, u32 pocketPos, enum Item itemId, u16 quantity)
 {
-    BagPocket_SetSlotData(pocket, pocketPos, (struct ItemSlot) {itemId, quantity});
+    // Preserve existing metadata when updating quantity/id
+    u16 existingMetadata = BagPocket_GetSlotData(pocket, pocketPos).metadata;
+    BagPocket_SetSlotData(pocket, pocketPos, (struct ItemSlot) {itemId, quantity, existingMetadata});
 }
 
 static inline u16 GetBagItemId(enum Pocket pocketId, u32 pocketPos)
@@ -213,6 +215,8 @@ bool32 HasAtLeastOnePokeBall(void);
 bool32 CheckBagHasSpace(enum Item itemId, u16 count);
 u32 GetFreeSpaceForItemInBag(enum Item itemId);
 bool32 AddBagItem(enum Item itemId, u16 count);
+bool32 AddAbilityVialToBag(enum Ability ability);
+const u8 *GetItemDescriptionWithMetadata(enum Item itemId, u16 metadata);
 bool32 RemoveBagItem(enum Item itemId, u16 count);
 void RemoveBagItemFromSlot(struct BagPocket *pocket, u16 slotId, u16 count);
 u8 CountUsedPCItemSlots(void);

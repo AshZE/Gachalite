@@ -873,6 +873,15 @@ void ItemUseOutOfBattle_AbilityPatch(u8 taskId)
     SetUpItemUseCallback(taskId);
 }
 
+u32 gAbilityVialBagSlot = 0;
+
+void ItemUseOutOfBattle_AbilityVial(u8 taskId)
+{
+    gAbilityVialBagSlot = GetItemListPosition(POCKET_ITEMS);
+    gItemUseCB = ItemUseCB_AbilityVial;
+    SetUpItemUseCallback(taskId);
+}
+
 void ItemUseOutOfBattle_Mint(u8 taskId)
 {
     gItemUseCB = ItemUseCB_Mint;

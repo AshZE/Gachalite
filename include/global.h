@@ -675,6 +675,7 @@ struct ItemSlot
 {
     enum Item itemId;
     u16 quantity;
+    u16 metadata; // general purpose per-slot data; used by Ability Vial to store ability ID
 };
 
 struct Pokeblock
@@ -1090,6 +1091,18 @@ struct Bag
     struct ItemSlot berries[BAG_BERRIES_COUNT];
 };
 
+struct RogueRun
+{
+    u8 isRunActive;
+    u8 currentFloor;
+    u8 battlesWon;
+    u8 bossDefeated;
+    u8 curseFlags;
+    u8 encountersRemaining;
+    u8 encountersTotal;
+    u8 padding;
+};
+
 struct SaveBlock1
 {
     /*0x00*/ struct Coords16 pos;
@@ -1207,6 +1220,7 @@ struct SaveBlock1
     struct DaycareMon route5DayCareMon;
 #endif
     // sizeof: 0x3???
+    struct RogueRun rogueRun;
 };
 
 extern struct SaveBlock1 *gSaveBlock1Ptr;

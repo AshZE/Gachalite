@@ -1,3 +1,4 @@
+extern enum Ability gRogueRewardAbility;
 #include "global.h"
 #include "battle.h"
 #include "battle_setup.h"
@@ -2758,7 +2759,18 @@ static void DebugAction_Give_Item_SelectQuantity(u8 taskId)
         DestroyItemIcon(taskId);
 
         PlaySE(MUS_LEVEL_UP);
-        AddBagItem(itemId, gTasks[taskId].tInput);
+        if (itemId == ITEM_ABILITY_VIAL)
+        {
+            u16 qty = gTasks[taskId].tInput;
+            u16 i;
+            enum Ability ability = gRogueRewardAbility != ABILITY_NONE ? gRogueRewardAbility : ABILITY_SLOW_START;
+            for (i = 0; i < qty; i++)
+                AddAbilityVialToBag(ability);
+        }
+        else
+        {
+            AddBagItem(itemId, gTasks[taskId].tInput);
+        }
         DebugAction_DestroyExtraWindow(taskId);
     }
     else if (JOY_NEW(B_BUTTON))

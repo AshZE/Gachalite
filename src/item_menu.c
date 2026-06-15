@@ -1027,7 +1027,8 @@ static void PrintItemDescription(int itemIndex)
     const u8 *str;
     if (itemIndex != LIST_CANCEL)
     {
-        str = GetItemDescription(GetBagItemId(gBagPosition.pocket, itemIndex));
+        struct ItemSlot slot = GetBagItemIdAndQuantity(gBagPosition.pocket, itemIndex);
+        str = GetItemDescriptionWithMetadata(slot.itemId, slot.metadata);
     }
     else
     {
