@@ -230,8 +230,7 @@ void Rogue_OnBattleWon(void)
 void Rogue_ReplacePartyMon(u8 partySlot, u16 species)
 {
     struct Pokemon *mon = &gPlayerParty[partySlot];
-    u8 level = Rogue_GetLevelCap();
-    CreateMon(mon, species, level, 0, OT_ID_PLAYER_ID, 0, 0);
+    CreateMon(mon, species, Rogue_GetLevelCap(), 0, OTID_STRUCT_PLAYER_ID);
 }
 
 // ---------------------------------------------------------------------------
