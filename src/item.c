@@ -382,6 +382,27 @@ bool32 AddAbilityVialToBag(enum Ability ability)
     return FALSE;
 }
 
+bool32 AddMoveScrollToBag(enum Move move)
+{
+    u32 i;
+    struct BagPocket *pocket = &gBagPockets[POCKET_ITEMS];
+
+    for (i = 0; i < pocket->capacity; i++)
+    {
+        struct ItemSlot slot = BagPocket_GetSlotData(pocket, i);
+        if (slot.itemId == ITEM_NONE)
+        {
+            BagPocket_SetSlotData(pocket, i, (struct ItemSlot) {
+                .itemId   = ITEM_MOVE_SCROLL,
+                .quantity = 1,
+                .metadata = (u16)move,
+            });
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
 static bool32 NONNULL BagPocket_RemoveItem(struct BagPocket *pocket, enum Item itemId, u16 count)
 {
     u32 itemLookupIndex, itemRemoveIndex = 0, totalQuantity = 0;
