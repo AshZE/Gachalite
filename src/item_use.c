@@ -882,6 +882,17 @@ void ItemUseOutOfBattle_AbilityVial(u8 taskId)
     SetUpItemUseCallback(taskId);
 }
 
+u32 gMoveScrollBagSlot = 0;
+ 
+void ItemUseOutOfBattle_MoveScroll(u8 taskId)
+{
+    gMoveScrollBagSlot = GetItemListPosition(POCKET_ITEMS);
+    gItemUseCB = ItemUseCB_MoveScroll;
+    SetUpItemUseCallback(taskId);
+}
+ 
+ 
+
 void ItemUseOutOfBattle_Mint(u8 taskId)
 {
     gItemUseCB = ItemUseCB_Mint;

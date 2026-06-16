@@ -5168,6 +5168,43 @@ void ItemUseCB_AbilityVial(u8 taskId, TaskFunc task)
     SetWordTaskArg(taskId, tOldFunc, (uintptr_t)(gTasks[taskId].func));
     gTasks[taskId].func = Task_AbilityVial;
 }
+ extern u32 gMoveScrollBagSlot;
+ 
+void ItemUseCB_MoveScroll(u8 taskId, TaskFunc task)
+{
+    struct Pokemon *mon;
+    u32 slotIndex = gMoveScrollBagSlot;
+    struct ItemSlot slot = BagPocket_GetSlotData(&gBagPockets[POCKET_ITEMS], slotIndex);
+    enum Move move = (enum Move)slot.metadata;
+ 
+    gPartyMenu.data1   = move;
+    gPartyMenu.learnMoveState = 0;
+ 
+    PlaySE(SE_SELECT);
+    mon = &gPlayerParty[gPartyMenu.slotId];
+ 
+    GetMonNickname(mon, gStringVar1);
+    StringCopy(gStringVar2, GetMoveName(move));
+ 
+    // Skip CanTeachMove — Move Scrolls are universal
+    if (MonKnowsMove(mon, move))
+    {
+        DisplayLearnMoveMessageAndClose(taskId, gText_PkmnAlreadyKnows);
+        return;
+    }
+ 
+    if (GiveMoveToMon(mon, move) != MON_HAS_MAX_MOVES)
+    {
+        // Consume scroll only on success
+        RemoveBagItemFromSlot(&gBagPockets[POCKET_ITEMS], slotIndex, 1);
+        gTasks[taskId].func = Task_LearnedMove;
+    }
+    else
+    {
+        DisplayLearnMoveMessage(gText_PkmnNeedsToReplaceMove);
+        gTasks[taskId].func = Task_ReplaceMoveYesNo;
+    }
+}
 
 #undef tState
 #undef tMonId

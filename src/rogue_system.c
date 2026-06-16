@@ -44,7 +44,7 @@ static const enum Ability sAbilityPool_B[] = {
     ABILITY_IRON_FIST,
     ABILITY_RECKLESS,
     ABILITY_HUSTLE,
-    // ABILITY_STRIKER,  // TODO: add once custom ability is defined
+    ABILITY_STRIKER, 
 };
 
 // ---------------------------------------------------------------------------
@@ -120,7 +120,7 @@ static const u16 sMovePool_B[] = {
 // Approximate odds: S ~5%, A ~25%, B ~70%
 // ---------------------------------------------------------------------------
 
-static u8 RollTier(void)
+static u8 RollTier(u8 bonusFloorLuck)
 {
     u32 roll = Random() % 100;
     if (roll < 5)  return 0; // S
@@ -193,12 +193,30 @@ void Rogue_AdvanceFloor(void)
     run->currentFloor++;
 }
 
+static u8 sFloorLevelCaps[] = {
+    20,  // Floor 1
+    40,  // Floor 2
+    60,  // Floor 3
+    80,  // Floor 4
+    100, // Floor 5
+};
+
 void Rogue_InitFloor(void)
 {
     struct RogueRun *run = &gSaveBlock1Ptr->rogueRun;
-    // Scale encounters with depth: floors 0-4 = 2, floors 5-9 = 3, etc.
     run->encountersTotal     = 2 + (run->currentFloor / 5);
     run->encountersRemaining = run->encountersTotal;
+
+    u8 floor = run->currentFloor;
+    if (floor < ARRAY_COUNT(sFloorLevelCaps))
+        VarSet(VAR_ROGUE_LEVEL_CAP, sFloorLevelCaps[floor]);
+    else
+        VarSet(VAR_ROGUE_LEVEL_CAP, 100); // fallback for floors beyond the table
+}
+
+u8 Rogue_GetLevelCap(void)
+{
+    return (u8)VarGet(VAR_ROGUE_LEVEL_CAP);
 }
 
 void Rogue_OnBattleWon(void)

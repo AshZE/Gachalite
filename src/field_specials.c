@@ -5797,14 +5797,24 @@ void Special_RollAbilityGacha(void)
 void Special_RollPokemonGacha(void)
 {
     u16 species = Rogue_RollPokemon();
-    ScriptGiveMon(species, 5, ITEM_NONE);
     RemoveBagItem(ITEM_POKE_TOKEN, 1);
     gSpecialVar_Result = species;
-}
 
+    if (CalculatePlayerPartyCount() < PARTY_SIZE)
+    {
+        ScriptGiveMon(species, 5, ITEM_NONE);
+    }
+    else
+    {
+        // Store rolled species for the replace/release task
+        VarSet(VAR_ROGUE_PENDING_MON, species);
+        ScriptContext_SetupScript(RogueScript_ReplaceOrRelease);
+    }
+}
 void Special_RollMoveGacha(void)
 {
     u16 move = Rogue_RollMove();
+    AddMoveScrollToBag(move);
     RemoveBagItem(ITEM_MOVE_GEM, 1);
     gSpecialVar_Result = move;
 }

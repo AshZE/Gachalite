@@ -1051,9 +1051,10 @@ enum __attribute__((packed)) Item
     ITEM_TATSUGIRINITE = 872,
     ITEM_GLIMMORANITE = 873,
     ITEM_ABILITY_VIAL = 874,
-    ITEM_POKE_TOKEN   = 875,
-    ITEM_ABILITY_SHARD = 876,
-    ITEM_MOVE_GEM     = 877,
+    ITEM_MOVE_SCROLL   = 875,  // Move Gacha reward — stores move ID in metadata
+    ITEM_POKE_TOKEN    = 876,  // Pokemon Gacha currency
+    ITEM_ABILITY_SHARD = 877,  // Ability Gacha currency
+    ITEM_MOVE_GEM      = 878,  // Move Gacha currency
 
     ITEMS_COUNT,
     ITEM_FIELD_ARROW = ITEMS_COUNT,

@@ -1662,42 +1662,57 @@ const struct ItemInfo gItemsInfo[] =
         .iconPalette = gItemIconPalette_AbilityCapsule,
     },
 
+     [ITEM_MOVE_SCROLL] =
+    {
+        .name = ITEM_NAME("Move Scroll"),
+        .price = 0,
+        .description = COMPOUND_STRING("Contains a\nmove to learn."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU_MOVES,
+        .fieldUseFunc = ItemUseOutOfBattle_MoveScroll,
+        .iconPic = gItemIcon_TMCase,
+        .iconPalette = gItemIconPalette_TMCase,
+    },
+ 
     [ITEM_POKE_TOKEN] =
     {
         .name = ITEM_NAME("PokeToken"),
         .price = 0,
-        .description = COMPOUND_STRING("Spend at the\nPokemon Gacha."),
+        .description = COMPOUND_STRING("Pokemon Gacha\ncurrency."),
         .pocket = POCKET_ITEMS,
-        .sortType = ITEM_TYPE_FIELD_USE,
+        .sortType = ITEM_TYPE_UNCATEGORIZED,
         .type = ITEM_USE_BAG_MENU,
-        .iconPic = gItemIcon_RareCandy,
-        .iconPalette = gItemIconPalette_RareCandy,
+        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
+        .iconPic = gItemIcon_QuestionMark,
+        .iconPalette = gItemIconPalette_QuestionMark,
     },
-
+ 
     [ITEM_ABILITY_SHARD] =
     {
-        .name = ITEM_NAME("Ability Shard"),
+        .name = ITEM_NAME("AbilityShard"),
         .price = 0,
-        .description = COMPOUND_STRING("Spend at the\nAbility Gacha."),
+        .description = COMPOUND_STRING("Ability Gacha\ncurrency."),
         .pocket = POCKET_ITEMS,
-        .sortType = ITEM_TYPE_FIELD_USE,
+        .sortType = ITEM_TYPE_UNCATEGORIZED,
         .type = ITEM_USE_BAG_MENU,
-        .iconPic = gItemIcon_StarPiece,
-        .iconPalette = gItemIconPalette_Star,
+        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
+        .iconPic = gItemIcon_QuestionMark,
+        .iconPalette = gItemIconPalette_QuestionMark,
     },
-
+ 
     [ITEM_MOVE_GEM] =
     {
         .name = ITEM_NAME("Move Gem"),
         .price = 0,
-        .description = COMPOUND_STRING("Spend at the\nMove Gacha."),
+        .description = COMPOUND_STRING("Move Gacha\ncurrency."),
         .pocket = POCKET_ITEMS,
-        .sortType = ITEM_TYPE_FIELD_USE,
+        .sortType = ITEM_TYPE_UNCATEGORIZED,
         .type = ITEM_USE_BAG_MENU,
-        .iconPic = gItemIcon_Nugget,
-        .iconPalette = gItemIconPalette_Nugget,
+        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
+        .iconPic = gItemIcon_QuestionMark,
+        .iconPalette = gItemIconPalette_QuestionMark,
     },
-
 
 // Mints
 
