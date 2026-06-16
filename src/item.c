@@ -880,7 +880,9 @@ u32 GetItemHoldEffectParam(enum Item itemId)
 }
 
 static u8 sAbilityVialDescription[64];
+static u8 sMoveScrollDescription[64];
 static const u8 sText_AbilityVialContains[] = _("Contains the\nability: ");
+static const u8 sText_MoveScrollContains[] = _("Contains the\nmove: ");
 
 const u8 *GetItemDescription(enum Item itemId)
 {
@@ -895,6 +897,13 @@ const u8 *GetItemDescriptionWithMetadata(enum Item itemId, u16 metadata)
         ptr = StringCopy(ptr, sText_AbilityVialContains);
         ptr = StringCopy(ptr, gAbilitiesInfo[metadata].name);
         return sAbilityVialDescription;
+    }
+    if (itemId == ITEM_MOVE_SCROLL && metadata != MOVE_NONE)
+    {
+        u8 *ptr = sMoveScrollDescription;
+        ptr = StringCopy(ptr, sText_MoveScrollContains);
+        ptr = StringCopy(ptr, GetMoveName(metadata));
+        return sMoveScrollDescription;
     }
     return gItemsInfo[SanitizeItemId(itemId)].description;
 }

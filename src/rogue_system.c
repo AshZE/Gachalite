@@ -217,7 +217,8 @@ void Rogue_InitFloor(void)
 
 u8 Rogue_GetLevelCap(void)
 {
-    return (u8)VarGet(VAR_ROGUE_LEVEL_CAP);
+    u8 cap = (u8)VarGet(VAR_ROGUE_LEVEL_CAP);
+    return (cap == 0) ? 5 : cap; // fallback for testing outside an active run
 }
 
 void Rogue_OnBattleWon(void)
