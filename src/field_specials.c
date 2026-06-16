@@ -5786,6 +5786,8 @@ bool8 CheckAddCoins(void)
 #include "script_pokemon_util.h"
 #include "rogue_system.h"
 
+extern const u8 EventScript_RogueReplaceOrReleaseMon[];
+
 void Special_RollAbilityGacha(void)
 {
     enum Ability result = Rogue_RollAbility();

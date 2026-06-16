@@ -14,6 +14,7 @@ void Rogue_AdvanceFloor(void);
 void Rogue_InitFloor(void);
 void Rogue_OnBattleWon(void);
 void Rogue_ReplacePartyMon(u8 partySlot, u16 species);
+u8   Rogue_GetLevelCap(void);
 // ---------------------------------------------------------------------------
 // Run state queries
 // ---------------------------------------------------------------------------
