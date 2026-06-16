@@ -1014,3 +1014,29 @@ LittlerootTown_Text_BirchSomethingToShowYouAtLab:
 	.string "I have something to show you.\n"
 	.string "Let's go to my LAB.$"
 
+LittlerootTown_EventScript_TestGachaPokemon::
+    special Special_RollPokemonGacha
+    bufferspeciesname 1, VAR_RESULT
+    msgbox LittlerootTown_Text_GachaPokemonResult, MSGBOX_DEFAULT
+    end
+
+LittlerootTown_EventScript_TestGachaMove::
+    special Special_RollMoveGacha
+    buffermovename 1, VAR_RESULT
+    msgbox LittlerootTown_Text_GachaMoveResult, MSGBOX_DEFAULT
+    end
+
+LittlerootTown_EventScript_TestGachaAbility::
+    special Special_RollAbilityGacha
+    special Special_BufferRolledAbilityName
+    msgbox LittlerootTown_Text_GachaAbilityResult, MSGBOX_DEFAULT
+    end
+
+LittlerootTown_Text_GachaPokemonResult:
+    .string "You got {STR_VAR_1}!$"
+
+LittlerootTown_Text_GachaMoveResult:
+    .string "You got a {STR_VAR_1} Move Scroll!$"
+
+LittlerootTown_Text_GachaAbilityResult:
+    .string "You got an {STR_VAR_1} Ability Vial!$"

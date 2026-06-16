@@ -640,6 +640,7 @@ gSpecials::
 	def_special UpdateTrainerCardPhotoIcons
 	def_special StickerManGetBragFlags
 	def_special CheckAddCoins
+	def_special Special_BufferRolledAbilityName
 
 	def_special Special_RollAbilityGacha
 	def_special Special_RollPokemonGacha

@@ -5880,3 +5880,8 @@ void Special_CheckCurrency(void)
 {
     gSpecialVar_Result = CheckBagHasItem(gSpecialVar_0x8004, 1);
 }
+
+void Special_BufferRolledAbilityName(void)
+{
+    StringCopy(gStringVar1, gAbilitiesInfo[gSpecialVar_Result].name);
+}
