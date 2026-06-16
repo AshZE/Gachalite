@@ -13,7 +13,7 @@ void Rogue_EndRun(void);
 void Rogue_AdvanceFloor(void);
 void Rogue_InitFloor(void);
 void Rogue_OnBattleWon(void);
-void Rogue_ReplacePartyMon(u8 partySlot, u16 species)
+void Rogue_ReplacePartyMon(u8 partySlot, u16 species);
 // ---------------------------------------------------------------------------
 // Run state queries
 // ---------------------------------------------------------------------------
