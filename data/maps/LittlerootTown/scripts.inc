@@ -1016,13 +1016,13 @@ LittlerootTown_Text_BirchSomethingToShowYouAtLab:
 
 LittlerootTown_EventScript_TestGachaPokemon::
     special Special_RollPokemonGacha
-    bufferspeciesname 1, VAR_RESULT
+    bufferspeciesname 0, VAR_RESULT
     msgbox LittlerootTown_Text_GachaPokemonResult, MSGBOX_DEFAULT
     end
 
 LittlerootTown_EventScript_TestGachaMove::
     special Special_RollMoveGacha
-    buffermovename 1, VAR_RESULT
+    buffermovename 0, VAR_RESULT
     msgbox LittlerootTown_Text_GachaMoveResult, MSGBOX_DEFAULT
     end
 

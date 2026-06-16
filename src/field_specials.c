@@ -5792,6 +5792,7 @@ void Special_RollAbilityGacha(void)
 {
     enum Ability result = Rogue_RollAbility();
     gRogueRewardAbility = result;
+    gSpecialVar_Result = result;
     AddAbilityVialToBag(result);
     RemoveBagItem(ITEM_ABILITY_SHARD, 1);
 }
