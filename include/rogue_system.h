@@ -3,22 +3,6 @@
 
 #include "global.h"
 
-// ---------------------------------------------------------------------------
-// RogueRun — persisted run state, to be added to struct SaveBlock1 in global.h
-// as: struct RogueRun rogueRun;
-// ---------------------------------------------------------------------------
-
-struct RogueRun
-{
-    u8 isRunActive;
-    u8 currentFloor;
-    u8 battlesWon;
-    u8 bossDefeated;
-    u8 curseFlags;
-    u8 encountersRemaining;
-    u8 encountersTotal;
-    u8 padding;
-};
 
 // ---------------------------------------------------------------------------
 // Run lifecycle
@@ -29,7 +13,7 @@ void Rogue_EndRun(void);
 void Rogue_AdvanceFloor(void);
 void Rogue_InitFloor(void);
 void Rogue_OnBattleWon(void);
-
+void Rogue_ReplacePartyMon(u8 partySlot, u16 species)
 // ---------------------------------------------------------------------------
 // Run state queries
 // ---------------------------------------------------------------------------

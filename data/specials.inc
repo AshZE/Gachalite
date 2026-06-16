@@ -640,3 +640,17 @@ gSpecials::
 	def_special UpdateTrainerCardPhotoIcons
 	def_special StickerManGetBragFlags
 	def_special CheckAddCoins
+
+	def_special Special_RollAbilityGacha
+	def_special Special_RollPokemonGacha
+	def_special Special_RollMoveGacha
+	def_special Special_StartRogueRun
+	def_special Special_EndRogueRun
+	def_special Special_IsRunActive
+	def_special Special_InitFloor
+	def_special Special_OnBattleWon
+	def_special Special_AdvanceFloor
+	def_special Special_GetCurrentFloor
+	def_special Special_CheckEncountersRemaining
+	def_special Special_CheckCurrency
+	def_special Special_ReplacePartyMon

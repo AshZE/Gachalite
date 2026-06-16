@@ -5802,14 +5802,24 @@ void Special_RollPokemonGacha(void)
 
     if (CalculatePlayerPartyCount() < PARTY_SIZE)
     {
-        ScriptGiveMon(species, 5, ITEM_NONE);
+        ScriptGiveMon(species, Rogue_GetLevelCap(), ITEM_NONE);
     }
     else
     {
-        // Store rolled species for the replace/release task
         VarSet(VAR_ROGUE_PENDING_MON, species);
-        ScriptContext_SetupScript(RogueScript_ReplaceOrRelease);
+        ScriptContext_SetupScript(EventScript_RogueReplaceOrReleaseMon);
     }
+}
+
+void Special_ReplacePartyMon(void)
+{
+    u8 slot = gSpecialVar_0x8004;
+    u16 species = VarGet(VAR_ROGUE_PENDING_MON);
+
+    if (slot == PARTY_NOTHING_CHOSEN)
+        return;
+
+    Rogue_ReplacePartyMon(slot, species);
 }
 void Special_RollMoveGacha(void)
 {

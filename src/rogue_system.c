@@ -2,6 +2,7 @@
 #include "random.h"
 #include "item.h"
 #include "battle.h"
+#include "event_data.h"
 #include "rogue_system.h"
 #include "constants/abilities.h"
 #include "constants/species.h"
@@ -134,7 +135,7 @@ static u8 RollTier(u8 bonusFloorLuck)
 
 enum Ability Rogue_RollAbility(void)
 {
-    u8 tier = RollTier();
+    u8 tier = RollTier(0);
     switch (tier)
     {
     case 0: return sAbilityPool_S[Random() % ARRAY_COUNT(sAbilityPool_S)];
@@ -145,7 +146,7 @@ enum Ability Rogue_RollAbility(void)
 
 u16 Rogue_RollPokemon(void)
 {
-    u8 tier = RollTier();
+    u8 tier = RollTier(0);
     switch (tier)
     {
     case 0: return sPokemonPool_S[Random() % ARRAY_COUNT(sPokemonPool_S)];
@@ -156,7 +157,7 @@ u16 Rogue_RollPokemon(void)
 
 u16 Rogue_RollMove(void)
 {
-    u8 tier = RollTier();
+    u8 tier = RollTier(0);
     switch (tier)
     {
     case 0: return sMovePool_S[Random() % ARRAY_COUNT(sMovePool_S)];
@@ -224,6 +225,13 @@ void Rogue_OnBattleWon(void)
     struct RogueRun *run = &gSaveBlock1Ptr->rogueRun;
     if (run->encountersRemaining > 0)
         run->encountersRemaining--;
+}
+
+void Rogue_ReplacePartyMon(u8 partySlot, u16 species)
+{
+    struct Pokemon *mon = &gPlayerParty[partySlot];
+    u8 level = Rogue_GetLevelCap();
+    CreateMon(mon, species, level, 0, OT_ID_PLAYER_ID, 0, 0);
 }
 
 // ---------------------------------------------------------------------------
