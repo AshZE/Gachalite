@@ -1017,6 +1017,11 @@ LittlerootTown_Text_BirchSomethingToShowYouAtLab:
 LittlerootTown_EventScript_TestGachaPokemon::
     lock
     faceplayer
+    msgbox LittlerootTown_Text_AskPokemonGacha, MSGBOX_YESNO
+    goto_if_eq VAR_RESULT, NO, LittlerootTown_EventScript_GachaCancelled
+    setvar VAR_0x8004, ITEM_POKE_TOKEN
+    special Special_CheckCurrency
+    goto_if_eq VAR_RESULT, FALSE, LittlerootTown_EventScript_GachaNoCurrency
     special Special_RollPokemonGacha
     bufferspeciesname 0, VAR_RESULT
     msgbox LittlerootTown_Text_GachaPokemonResult, MSGBOX_DEFAULT
@@ -1026,6 +1031,11 @@ LittlerootTown_EventScript_TestGachaPokemon::
 LittlerootTown_EventScript_TestGachaMove::
     lock
     faceplayer
+    msgbox LittlerootTown_Text_AskMoveGacha, MSGBOX_YESNO
+    goto_if_eq VAR_RESULT, NO, LittlerootTown_EventScript_GachaCancelled
+    setvar VAR_0x8004, ITEM_MOVE_GEM
+    special Special_CheckCurrency
+    goto_if_eq VAR_RESULT, FALSE, LittlerootTown_EventScript_GachaNoCurrency
     special Special_RollMoveGacha
     buffermovename 0, VAR_RESULT
     msgbox LittlerootTown_Text_GachaMoveResult, MSGBOX_DEFAULT
@@ -1035,17 +1045,43 @@ LittlerootTown_EventScript_TestGachaMove::
 LittlerootTown_EventScript_TestGachaAbility::
     lock
     faceplayer
+    msgbox LittlerootTown_Text_AskAbilityGacha, MSGBOX_YESNO
+    goto_if_eq VAR_RESULT, NO, LittlerootTown_EventScript_GachaCancelled
+    setvar VAR_0x8004, ITEM_ABILITY_SHARD
+    special Special_CheckCurrency
+    goto_if_eq VAR_RESULT, FALSE, LittlerootTown_EventScript_GachaNoCurrency
     special Special_RollAbilityGacha
     special Special_BufferRolledAbilityName
     msgbox LittlerootTown_Text_GachaAbilityResult, MSGBOX_DEFAULT
     release
     end
 
+LittlerootTown_EventScript_GachaCancelled::
+    release
+    end
+
+LittlerootTown_EventScript_GachaNoCurrency::
+    msgbox LittlerootTown_Text_GachaNoCurrency, MSGBOX_DEFAULT
+    release
+    end
+
+LittlerootTown_Text_AskPokemonGacha:
+    .string "Would you like to roll the Pokemon\nGacha for 1 PokeToken?$"
+
+LittlerootTown_Text_AskMoveGacha:
+    .string "Would you like to roll the Move\nGacha for 1 Move Gem?$"
+
+LittlerootTown_Text_AskAbilityGacha:
+    .string "Would you like to roll the Ability\nGacha for 1 Ability Shard?$"
+
+LittlerootTown_Text_GachaNoCurrency:
+    .string "You don't have enough currency\nfor that gacha!$"
+
 LittlerootTown_Text_GachaPokemonResult:
-    .string "You got {STR_VAR_1}!$"
+    .string "You got a {STR_VAR_1}!$"
 
 LittlerootTown_Text_GachaMoveResult:
-    .string "You got a {STR_VAR_1} Move Scroll!$"
+    .string "You got the {STR_VAR_1} Move Scroll!$"
 
 LittlerootTown_Text_GachaAbilityResult:
-    .string "You got an {STR_VAR_1} Ability Vial!$"
+    .string "You got the {STR_VAR_1} Ability Vial!$"
