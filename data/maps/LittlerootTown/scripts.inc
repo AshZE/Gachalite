@@ -1015,21 +1015,30 @@ LittlerootTown_Text_BirchSomethingToShowYouAtLab:
 	.string "Let's go to my LAB.$"
 
 LittlerootTown_EventScript_TestGachaPokemon::
+    lock
+    faceplayer
     special Special_RollPokemonGacha
     bufferspeciesname 0, VAR_RESULT
     msgbox LittlerootTown_Text_GachaPokemonResult, MSGBOX_DEFAULT
+    release
     end
 
 LittlerootTown_EventScript_TestGachaMove::
+    lock
+    faceplayer
     special Special_RollMoveGacha
     buffermovename 0, VAR_RESULT
     msgbox LittlerootTown_Text_GachaMoveResult, MSGBOX_DEFAULT
+    release
     end
 
 LittlerootTown_EventScript_TestGachaAbility::
+    lock
+    faceplayer
     special Special_RollAbilityGacha
     special Special_BufferRolledAbilityName
     msgbox LittlerootTown_Text_GachaAbilityResult, MSGBOX_DEFAULT
+    release
     end
 
 LittlerootTown_Text_GachaPokemonResult:
