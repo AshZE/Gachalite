@@ -4561,10 +4561,21 @@ static void SetMonTypeIcons(void)
     }
     else
     {
-        SetTypeSpritePosAndPal(GetSpeciesType(summary->species, 0), 120, 48, SPRITE_ARR_ID_TYPE);
-        if (GetSpeciesType(summary->species, 0) != GetSpeciesType(summary->species, 1))
+        enum Type type1 = GetSpeciesType(summary->species, 0);
+        enum Type type2 = GetSpeciesType(summary->species, 1);
+        if (summary->isUpgraded)
         {
-            SetTypeSpritePosAndPal(GetSpeciesType(summary->species, 1), 160, 48, SPRITE_ARR_ID_TYPE + 1);
+            enum Type t1, t2;
+            if (Rogue_GetUpgradeTypes(summary->species, &t1, &t2))
+            {
+                if (t1 != TYPE_NONE) type1 = t1;
+                if (t2 != TYPE_NONE) type2 = t2;
+            }
+        }
+        SetTypeSpritePosAndPal(type1, 120, 48, SPRITE_ARR_ID_TYPE);
+        if (type1 != type2)
+        {
+            SetTypeSpritePosAndPal(type2, 160, 48, SPRITE_ARR_ID_TYPE + 1);
             SetSpriteInvisibility(SPRITE_ARR_ID_TYPE + 1, FALSE);
         }
         else
