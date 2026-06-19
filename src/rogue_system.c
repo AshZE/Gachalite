@@ -27,7 +27,7 @@ static const struct UpgradeEssenceTableEntry sUpgradeTable[] = {
             .newType2 = TYPE_GROUND,
             .statBuffs = { [STAT_ATK] = 20, [STAT_SPEED] = 15 },
             .newAbilities = { ABILITY_SAND_FORCE, ABILITY_SAND_RUSH, ABILITY_STEADFAST },
-    c        .moveUnlocks = { MOVE_SACRED_FIRE, MOVE_NONE },
+            .moveUnlocks = { MOVE_SACRED_FIRE, MOVE_NONE },
         }
     },
     {
