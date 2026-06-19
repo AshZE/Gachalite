@@ -655,3 +655,6 @@ gSpecials::
 	def_special Special_CheckEncountersRemaining
 	def_special Special_CheckCurrency
 	def_special Special_ReplacePartyMon
+        def_special Special_ApplyUpgradeEssence
+        def_special Special_CheckMonHasUpgrade
+        def_special Special_CheckMonIsUpgraded
