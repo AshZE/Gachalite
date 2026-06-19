@@ -1091,6 +1091,20 @@ EventScript_TestUpgrade::
     faceplayer
     setvar VAR_0x8004, 0
     special Special_ApplyUpgradeEssence
+	special Special_CheckMonIsUpgraded
+	compare VAR_RESULT, 1
+	goto_if_eq VAR_RESULT, 1, LittlerootTown_EventScript_UpgradeSuccess
+	msgbox LittlerootTown_Text_UpgradeFailed, MSGBOX_DEFAULT
+	release
+	end
+
+	LittlerootTown_EventScript_UpgradeSuccess:
+	msgbox LittlerootTown_Text_UpgradeApplied, MSGBOX_DEFAULT
+	release
+	end
+
+	LittlerootTown_Text_UpgradeFailed:
+    .string "Upgrade failed - not upgraded!$"
     msgbox LittlerootTown_Text_UpgradeApplied, MSGBOX_DEFAULT
     release
     end
