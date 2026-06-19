@@ -29,6 +29,14 @@ static const struct UpgradeEssenceTableEntry sUpgradeTable[] = {
             .newAbilities = { ABILITY_SAND_FORCE, ABILITY_SAND_RUSH, ABILITY_STEADFAST },
             .moveUnlocks = { MOVE_SACRED_FIRE, MOVE_NONE },
         }
+                SPECIES_DITTO,
+        {
+            .newType1 = TYPE_GHOST,
+            .newType2 = TYPE_GROUND,
+            .statBuffs = { [STAT_HP] = 80, [STAT_SPEED] = 100 },
+            .newAbilities = { ABILITY_SAND_FORCE, ABILITY_SAND_RUSH, ABILITY_STEADFAST },
+            .moveUnlocks = { MOVE_SACRED_FIRE, MOVE_NONE },
+        }
     },
     // Add more entries here
 };
