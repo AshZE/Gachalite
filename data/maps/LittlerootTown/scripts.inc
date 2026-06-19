@@ -1086,7 +1086,7 @@ LittlerootTown_Text_GachaMoveResult:
 LittlerootTown_Text_GachaAbilityResult:
     .string "You got the {STR_VAR_1} Ability Vial!$"
 	
-LittlerootTown_EventScript_TestUpgrade::
+EventScript_TestUpgrade::
     lock
     faceplayer
     setvar VAR_0x8004, 0
