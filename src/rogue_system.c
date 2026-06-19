@@ -24,10 +24,10 @@ static const struct UpgradeEssenceTableEntry sUpgradeTable[] = {
         SPECIES_LYCANROC,
         {
             .newType1 = TYPE_NONE,
-            .newType2 = TYPE_NONE,
+            .newType2 = TYPE_GROUND,
             .statBuffs = { [STAT_ATK] = 20, [STAT_SPEED] = 15 },
             .newAbilities = { ABILITY_SAND_FORCE, ABILITY_SAND_RUSH, ABILITY_STEADFAST },
-            .moveUnlocks = { MOVE_STONE_EDGE, MOVE_NONE },
+            .moveUnlocks = { MOVE_SACRED_FIRE, MOVE_NONE },
         }
     },
     // Add more entries here
