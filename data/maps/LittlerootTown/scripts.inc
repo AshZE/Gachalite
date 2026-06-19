@@ -1086,11 +1086,14 @@ LittlerootTown_Text_GachaMoveResult:
 LittlerootTown_Text_GachaAbilityResult:
     .string "You got the {STR_VAR_1} Ability Vial!$"
 	
-EventScript_TestUpgrade::
+LittlerootTown_EventScript_TestUpgrade::
+    lock
+    faceplayer
     setvar VAR_0x8004, 0
-    special ApplyUpgradeEssence
-    msgbox Str_UpgradeApplied, MSGBOX_DEFAULT
-    return
+    special Special_ApplyUpgradeEssence
+    msgbox LittlerootTown_Text_UpgradeApplied, MSGBOX_DEFAULT
+    release
+    end
 
-Str_UpgradeApplied:
+LittlerootTown_Text_UpgradeApplied:
     .string "Upgrade applied!$"
