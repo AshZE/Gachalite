@@ -41,6 +41,7 @@
 #include "pokemon_summary_screen.h"
 #include "pokemon_storage_system.h"
 #include "pokerus.h"
+#include "rogue_system.h"
 #include "random.h"
 #include "recorded_battle.h"
 #include "regions.h"
@@ -1906,6 +1907,32 @@ void CalculateMonStats(struct Pokemon *mon)
     if (currentHP > newMaxHP)
         currentHP = newMaxHP;
 
+    if (mon->box.isUpgraded)
+    {
+        s16 buffs[NUM_STATS];
+        if (Rogue_GetUpgradeStatBuffs(species, buffs))
+        {
+            for (u32 i = STAT_ATK; i < NUM_STATS; i++)
+            {
+                if (buffs[i] == 0)
+                    continue;
+                u16 stat = GetMonData(mon, MON_DATA_ATK + (i - STAT_ATK));
+                s32 buffed = (s32)stat + buffs[i];
+                if (buffed < 1) buffed = 1;
+                SetMonData(mon, MON_DATA_ATK + (i - STAT_ATK), &buffed);
+            }
+            if (buffs[STAT_HP] != 0)
+            {
+                s32 buffed = (s32)newMaxHP + buffs[STAT_HP];
+                if (buffed < 1) buffed = 1;
+                newMaxHP = buffed;
+                SetMonData(mon, MON_DATA_MAX_HP, &newMaxHP);
+                if (currentHP > newMaxHP)
+                    currentHP = newMaxHP;
+            }
+        }
+    }
+
     SetMonData(mon, MON_DATA_HP, &currentHP);
 }
 
@@ -2996,6 +3023,9 @@ u32 GetBoxMonData3(struct BoxPokemon *boxMon, s32 field, u8 *data)
         case MON_DATA_DAYS_SINCE_FORM_CHANGE:
             retVal = boxMon->daysSinceFormChange;
             break;
+        case MON_DATA_IS_UPGRADED:
+            retVal = boxMon->isUpgraded;
+            break;
         default:
             break;
         }
@@ -3430,6 +3460,9 @@ void SetBoxMonData(struct BoxPokemon *boxMon, s32 field, const void *dataArg)
         case MON_DATA_DAYS_SINCE_FORM_CHANGE:
             SET8(boxMon->daysSinceFormChange);
             break;
+        case MON_DATA_IS_UPGRADED:
+            SET8(boxMon->isUpgraded);
+            break;
         }
     }
 
@@ -3617,6 +3650,12 @@ enum Ability GetMonAbility(struct Pokemon *mon)
 {
     u16 species = GetMonData(mon, MON_DATA_SPECIES);
     u8 abilityNum = GetMonData(mon, MON_DATA_ABILITY_NUM);
+    if (mon->box.isUpgraded)
+    {
+        enum Ability upgraded = Rogue_GetUpgradedAbility(species, abilityNum);
+        if (upgraded != ABILITY_NONE)
+            return upgraded;
+    }
     return GetAbilityBySpecies(species, abilityNum);
 }
 
@@ -3889,8 +3928,17 @@ void PokemonToBattleMon(struct Pokemon *src, struct BattlePokemon *dst)
     dst->types[0] = GetSpeciesType(dst->species, 0);
     dst->types[1] = GetSpeciesType(dst->species, 1);
     dst->types[2] = TYPE_MYSTERY;
+    if (src->box.isUpgraded)
+    {
+        enum Type t1, t2;
+        if (Rogue_GetUpgradeTypes(dst->species, &t1, &t2))
+        {
+            if (t1 != TYPE_NONE) dst->types[0] = t1;
+            if (t2 != TYPE_NONE) dst->types[1] = t2;
+        }
+    }
     dst->isShiny = IsMonShiny(src);
-    dst->ability = GetAbilityBySpecies(dst->species, dst->abilityNum);
+    dst->ability = GetMonAbility(src);
     for (i = 0; i < MAX_EXTRA_ABILITIES; i++)           
         dst->extraAbilities[i] = src->box.extraAbilities[i]; 
     GetMonData(src, MON_DATA_NICKNAME, nickname);

@@ -3,10 +3,100 @@
 #include "item.h"
 #include "battle.h"
 #include "event_data.h"
+#include "pokemon.h"
 #include "rogue_system.h"
 #include "constants/abilities.h"
 #include "constants/species.h"
 #include "constants/moves.h"
+
+// ---------------------------------------------------------------------------
+// Upgrade Essence table — sparse, only species with upgrades listed
+// ---------------------------------------------------------------------------
+
+struct UpgradeEssenceTableEntry
+{
+    u16 species;
+    struct UpgradeEssenceEntry entry;
+};
+
+static const struct UpgradeEssenceTableEntry sUpgradeTable[] = {
+    {
+        SPECIES_LYCANROC,
+        {
+            .newType1 = TYPE_NONE,
+            .newType2 = TYPE_NONE,
+            .statBuffs = { [STAT_ATK] = 20, [STAT_SPEED] = 15 },
+            .newAbilities = { ABILITY_SAND_FORCE, ABILITY_SAND_RUSH, ABILITY_STEADFAST },
+            .moveUnlocks = { MOVE_STONE_EDGE, MOVE_NONE },
+        }
+    },
+    // Add more entries here
+};
+
+static const struct UpgradeEssenceEntry *GetUpgradeEntry(u16 species)
+{
+    for (u32 i = 0; i < ARRAY_COUNT(sUpgradeTable); i++)
+    {
+        if (sUpgradeTable[i].species == species)
+            return &sUpgradeTable[i].entry;
+    }
+    return NULL;
+}
+
+bool32 Rogue_MonCanBeUpgraded(u16 species)
+{
+    return GetUpgradeEntry(species) != NULL;
+}
+
+bool32 Rogue_GetUpgradeTypes(u16 species, enum Type *type1, enum Type *type2)
+{
+    const struct UpgradeEssenceEntry *entry = GetUpgradeEntry(species);
+    if (entry == NULL)
+        return FALSE;
+    *type1 = entry->newType1;
+    *type2 = entry->newType2;
+    return TRUE;
+}
+
+bool32 Rogue_GetUpgradeStatBuffs(u16 species, s16 *buffsOut)
+{
+    const struct UpgradeEssenceEntry *entry = GetUpgradeEntry(species);
+    if (entry == NULL)
+        return FALSE;
+    memcpy(buffsOut, entry->statBuffs, sizeof(entry->statBuffs));
+    return TRUE;
+}
+
+enum Ability Rogue_GetUpgradedAbility(u16 species, u8 abilityNum)
+{
+    const struct UpgradeEssenceEntry *entry = GetUpgradeEntry(species);
+    if (entry == NULL || abilityNum >= MAX_UPGRADE_ABILITIES)
+        return ABILITY_NONE;
+    return entry->newAbilities[abilityNum];
+}
+
+bool32 Rogue_MoveIsUpgradeUnlock(u16 species, enum Move move)
+{
+    const struct UpgradeEssenceEntry *entry = GetUpgradeEntry(species);
+    if (entry == NULL)
+        return FALSE;
+    for (u32 i = 0; i < MAX_UPGRADE_MOVE_UNLOCKS && entry->moveUnlocks[i] != MOVE_NONE; i++)
+    {
+        if (entry->moveUnlocks[i] == move)
+            return TRUE;
+    }
+    return FALSE;
+}
+
+void Rogue_ApplyUpgradeEssence(struct Pokemon *mon)
+{
+    u16 species = GetMonData(mon, MON_DATA_SPECIES);
+    if (!Rogue_MonCanBeUpgraded(species))
+        return;
+    u8 val8 = TRUE;
+    SetMonData(mon, MON_DATA_IS_UPGRADED, &val8);
+    CalculateMonStats(mon);
+}
 
 // ---------------------------------------------------------------------------
 // NOTE: ABILITY_STRIKER is a custom ability not yet added to

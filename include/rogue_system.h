@@ -5,6 +5,31 @@
 
 
 // ---------------------------------------------------------------------------
+// Upgrade Essence — single source of truth is sUpgradeTable in rogue_system.c.
+// BoxPokemon stores only a 1-bit "isUpgraded" flag; everything else is
+// resolved at read-time via species lookup.
+// ---------------------------------------------------------------------------
+
+#define MAX_UPGRADE_ABILITIES    3
+#define MAX_UPGRADE_MOVE_UNLOCKS 8
+
+struct UpgradeEssenceEntry
+{
+    enum Type newType1;    // TYPE_NONE = no change
+    enum Type newType2;    // TYPE_NONE = no change
+    s16 statBuffs[NUM_STATS];
+    enum Ability newAbilities[MAX_UPGRADE_ABILITIES]; // ABILITY_NONE = no change for that slot
+    enum Move moveUnlocks[MAX_UPGRADE_MOVE_UNLOCKS];  // MOVE_NONE-terminated
+};
+
+bool32 Rogue_MonCanBeUpgraded(u16 species);
+bool32 Rogue_GetUpgradeTypes(u16 species, enum Type *type1, enum Type *type2);
+bool32 Rogue_GetUpgradeStatBuffs(u16 species, s16 *buffsOut); // buffsOut: s16[NUM_STATS]
+enum Ability Rogue_GetUpgradedAbility(u16 species, u8 abilityNum);
+bool32 Rogue_MoveIsUpgradeUnlock(u16 species, enum Move move);
+void Rogue_ApplyUpgradeEssence(struct Pokemon *mon);
+
+// ---------------------------------------------------------------------------
 // Run lifecycle
 // ---------------------------------------------------------------------------
 

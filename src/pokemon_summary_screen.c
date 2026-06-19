@@ -31,6 +31,7 @@
 #include "pokeball.h"
 #include "pokemon.h"
 #include "pokemon_sprite_visualizer.h"
+#include "rogue_system.h"
 #include "pokemon_storage_system.h"
 #include "pokemon_summary_screen.h"
 #include "pokerus.h"
@@ -145,7 +146,8 @@ static EWRAM_DATA struct PokemonSummaryScreenData
         u16 species2; // 0x2
         u8 isEgg:1; // 0x4
         u8 isShiny:1;
-        u8 padding:6;
+        u8 isUpgraded:1;
+        u8 padding:5;
         u8 level; // 0x5
         u8 ribbonCount; // 0x6
         u8 ailment; // 0x7
@@ -1571,6 +1573,7 @@ static bool8 ExtractMonDataToSummaryStruct(struct Pokemon *mon)
         sum->exp = GetMonData(mon, MON_DATA_EXP);
         sum->level = GetMonData(mon, MON_DATA_LEVEL);
         sum->abilityNum = GetMonData(mon, MON_DATA_ABILITY_NUM);
+        sum->isUpgraded = mon->box.isUpgraded;
         for (i = 0; i < MAX_EXTRA_ABILITIES; i++)
             sum->extraAbilities[i] = mon->box.extraAbilities[i];
         sum->item = GetMonData(mon, MON_DATA_HELD_ITEM);
@@ -3687,13 +3690,23 @@ static void PrintMonOTID(void)
 
 static void PrintMonAbilityName(void)
 {
-    enum Ability ability = GetAbilityBySpecies(sMonSummaryScreen->summary.species, sMonSummaryScreen->summary.abilityNum);
+    struct PokeSummary *sum = &sMonSummaryScreen->summary;
+    enum Ability ability = ABILITY_NONE;
+    if (sum->isUpgraded)
+        ability = Rogue_GetUpgradedAbility(sum->species, sum->abilityNum);
+    if (ability == ABILITY_NONE)
+        ability = GetAbilityBySpecies(sum->species, sum->abilityNum);
     PrintTextOnWindow(AddWindowFromTemplateList(sPageInfoTemplate, PSS_DATA_WINDOW_INFO_ABILITY), gAbilitiesInfo[ability].name, 0, 1, 0, 1);
 }
 
 static void PrintMonAbilityDescription(void)
 {
-    enum Ability ability = GetAbilityBySpecies(sMonSummaryScreen->summary.species, sMonSummaryScreen->summary.abilityNum);
+    struct PokeSummary *sum = &sMonSummaryScreen->summary;
+    enum Ability ability = ABILITY_NONE;
+    if (sum->isUpgraded)
+        ability = Rogue_GetUpgradedAbility(sum->species, sum->abilityNum);
+    if (ability == ABILITY_NONE)
+        ability = GetAbilityBySpecies(sum->species, sum->abilityNum);
     PrintTextOnWindow(AddWindowFromTemplateList(sPageInfoTemplate, PSS_DATA_WINDOW_INFO_ABILITY), gAbilitiesInfo[ability].description, 0, 17, 0, 0);
 }
 

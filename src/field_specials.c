@@ -5886,3 +5886,22 @@ void Special_BufferRolledAbilityName(void)
 {
     StringCopy(gStringVar1, gAbilitiesInfo[gSpecialVar_Result].name);
 }
+
+// caller sets gSpecialVar_0x8004 to the party slot
+void Special_ApplyUpgradeEssence(void)
+{
+    Rogue_ApplyUpgradeEssence(&gPlayerParty[gSpecialVar_0x8004]);
+}
+
+// caller sets gSpecialVar_0x8004 to the party slot
+void Special_CheckMonHasUpgrade(void)
+{
+    u16 species = GetMonData(&gPlayerParty[gSpecialVar_0x8004], MON_DATA_SPECIES);
+    gSpecialVar_Result = Rogue_MonCanBeUpgraded(species);
+}
+
+// caller sets gSpecialVar_0x8004 to the party slot
+void Special_CheckMonIsUpgraded(void)
+{
+    gSpecialVar_Result = GetMonData(&gPlayerParty[gSpecialVar_0x8004], MON_DATA_IS_UPGRADED);
+}
