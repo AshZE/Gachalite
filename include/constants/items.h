@@ -1055,6 +1055,7 @@ enum __attribute__((packed)) Item
     ITEM_POKE_TOKEN    = 876,  // Pokemon Gacha currency
     ITEM_ABILITY_SHARD = 877,  // Ability Gacha currency
     ITEM_MOVE_GEM      = 878,  // Move Gacha currency
+    ITEM_UPGRADE_ESSENCE = 879,  // Upgrade Essence currency
 
     ITEMS_COUNT,
     ITEM_FIELD_ARROW = ITEMS_COUNT,

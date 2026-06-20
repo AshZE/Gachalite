@@ -1714,6 +1714,19 @@ const struct ItemInfo gItemsInfo[] =
         .iconPalette = gItemIconPalette_QuestionMark,
     },
 
+    [ITEM_UPGRADE_ESSENCE] =
+    {
+        .name = ITEM_NAME("UpgradeEssence"),
+        .price = 0,
+        .description = COMPOUND_STRING("Upgrades a\ncompatible Pokemon."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_UNCATEGORIZED,
+        .type = ITEM_USE_BAG_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
+        .iconPic = gItemIcon_QuestionMark,
+        .iconPalette = gItemIconPalette_QuestionMark,
+    },
+
 // Mints
 
     [ITEM_LONELY_MINT] =
