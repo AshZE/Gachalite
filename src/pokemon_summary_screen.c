@@ -4553,6 +4553,7 @@ void SetTypeSpritePosAndPal(enum Type typeId, u8 x, u8 y, u8 spriteArrayId)
 
 static void SetMonTypeIcons(void)
 {
+    enum Type type1, type2, t1, t2;
     struct PokeSummary *summary = &sMonSummaryScreen->summary;
     if (summary->isEgg)
     {
@@ -4561,14 +4562,33 @@ static void SetMonTypeIcons(void)
     }
     else
     {
-        enum Type type1 = GetSpeciesType(summary->species, 0);
-        enum Type type2 = GetSpeciesType(summary->species, 1);
+        type1 = GetSpeciesType(summary->species, 0);
+        type2 = GetSpeciesType(summary->species, 1);
         if (summary->isUpgraded)
-        
-            enum Type t1, t2;
+        {
+            if (Rogue_GetUpgradeTypes(summary->species, &t1, &t2))
+            {
+                static void SetMonTypeIcons(void)
+{
+    enum Type type1, type2, t1, t2;
+    struct PokeSummary *summary = &sMonSummaryScreen->summary;
+    if (summary->isEgg)
+    {
+        SetTypeSpritePosAndPal(TYPE_MYSTERY, 120, 48, SPRITE_ARR_ID_TYPE);
+        SetSpriteInvisibility(SPRITE_ARR_ID_TYPE + 1, TRUE);
+    }
+    else
+    {
+        type1 = GetSpeciesType(summary->species, 0);
+        type2 = GetSpeciesType(summary->species, 1);
+        if (summary->isUpgraded)
+        {
             if (Rogue_GetUpgradeTypes(summary->species, &t1, &t2))
             {
                 if (t1 != TYPE_NONE) type1 = t1;
+                if (t2 != TYPE_NONE) type2 = t2;
+            }
+        }
                 if (t2 != TYPE_NONE) type2 = t2;
             }
         }
