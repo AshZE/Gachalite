@@ -80,6 +80,7 @@
 #include "constants/party_menu.h"
 #include "constants/rgb.h"
 #include "constants/songs.h"
+#include "rogue_system.h"
 
 enum {
     MENU_SUMMARY,
@@ -4889,7 +4890,14 @@ void Task_AbilityCapsule(u8 taskId)
         }
         gPartyMenuUseExitCallback = TRUE;
         GetMonNickname(&gPlayerParty[tMonId], gStringVar1);
-        StringCopy(gStringVar2, gAbilitiesInfo[GetAbilityBySpecies(tSpecies, tAbilityNum)].name);
+        {
+            enum Ability abilityForPrompt = ABILITY_NONE;
+            if (GetMonData(&gPlayerParty[tMonId], MON_DATA_IS_UPGRADED))
+                abilityForPrompt = Rogue_GetUpgradedAbility(tSpecies, tAbilityNum);
+            if (abilityForPrompt == ABILITY_NONE)
+                abilityForPrompt = GetAbilityBySpecies(tSpecies, tAbilityNum);
+            StringCopy(gStringVar2, gAbilitiesInfo[abilityForPrompt].name);
+        }
         StringExpandPlaceholders(gStringVar4, sText_askText);
         PlaySE(SE_SELECT);
         DisplayPartyMenuMessage(gStringVar4, 1);
@@ -4974,7 +4982,14 @@ void Task_AbilityPatch(u8 taskId)
         }
         gPartyMenuUseExitCallback = TRUE;
         GetMonNickname(&gPlayerParty[tMonId], gStringVar1);
-        StringCopy(gStringVar2, gAbilitiesInfo[GetAbilityBySpecies(tSpecies, tAbilityNum)].name);
+        {
+            enum Ability abilityForPrompt = ABILITY_NONE;
+            if (GetMonData(&gPlayerParty[tMonId], MON_DATA_IS_UPGRADED))
+                abilityForPrompt = Rogue_GetUpgradedAbility(tSpecies, tAbilityNum);
+            if (abilityForPrompt == ABILITY_NONE)
+                abilityForPrompt = GetAbilityBySpecies(tSpecies, tAbilityNum);
+            StringCopy(gStringVar2, gAbilitiesInfo[abilityForPrompt].name);
+        }
         StringExpandPlaceholders(gStringVar4, sText_askText);
         PlaySE(SE_SELECT);
         DisplayPartyMenuMessage(gStringVar4, 1);
