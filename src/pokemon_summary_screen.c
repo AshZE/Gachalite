@@ -4563,6 +4563,14 @@ static void SetMonTypeIcons(void)
     {
         enum Type type1 = GetSpeciesType(summary->species, 0);
         enum Type type2 = GetSpeciesType(summary->species, 1);
+        // TEMP DEBUG — remove later
+    if (summary->species == SPECIES_DITTO)
+    {   
+    SetTypeSpritePosAndPal(TYPE_GHOST, 120, 48, SPRITE_ARR_ID_TYPE);
+    SetTypeSpritePosAndPal(TYPE_GROUND, 160, 48, SPRITE_ARR_ID_TYPE + 1);
+    SetSpriteInvisibility(SPRITE_ARR_ID_TYPE + 1, FALSE);
+    return;
+    }
         if (summary->isUpgraded)
         {
             enum Type t1, t2;
