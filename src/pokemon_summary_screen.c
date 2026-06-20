@@ -1573,7 +1573,7 @@ static bool8 ExtractMonDataToSummaryStruct(struct Pokemon *mon)
         sum->exp = GetMonData(mon, MON_DATA_EXP);
         sum->level = GetMonData(mon, MON_DATA_LEVEL);
         sum->abilityNum = GetMonData(mon, MON_DATA_ABILITY_NUM);
-        sum->isUpgraded = mon->box.isUpgraded;
+        sum->isUpgraded = (mon->box.isUpgraded != 0) ? 1 : 0;
         for (i = 0; i < MAX_EXTRA_ABILITIES; i++)
             sum->extraAbilities[i] = mon->box.extraAbilities[i];
         sum->item = GetMonData(mon, MON_DATA_HELD_ITEM);
@@ -4563,16 +4563,8 @@ static void SetMonTypeIcons(void)
     {
         enum Type type1 = GetSpeciesType(summary->species, 0);
         enum Type type2 = GetSpeciesType(summary->species, 1);
-        // TEMP DEBUG — remove later
-    if (summary->species == SPECIES_DITTO)
-    {   
-    SetTypeSpritePosAndPal(TYPE_GHOST, 120, 48, SPRITE_ARR_ID_TYPE);
-    SetTypeSpritePosAndPal(TYPE_GROUND, 160, 48, SPRITE_ARR_ID_TYPE + 1);
-    SetSpriteInvisibility(SPRITE_ARR_ID_TYPE + 1, FALSE);
-    return;
-    }
         if (summary->isUpgraded)
-        {
+        
             enum Type t1, t2;
             if (Rogue_GetUpgradeTypes(summary->species, &t1, &t2))
             {
