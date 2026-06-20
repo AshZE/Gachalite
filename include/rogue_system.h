@@ -20,6 +20,14 @@ struct UpgradeEssenceEntry
     s16 statBuffs[NUM_STATS];
     enum Ability newAbilities[MAX_UPGRADE_ABILITIES]; // ABILITY_NONE = no change for that slot
     enum Move moveUnlocks[MAX_UPGRADE_MOVE_UNLOCKS];  // MOVE_NONE-terminated
+    u8 essenceCost;
+};
+
+enum UpgradeApplyResult
+{
+    UPGRADE_APPLY_SUCCESS,
+    UPGRADE_APPLY_NOT_ELIGIBLE,
+    UPGRADE_APPLY_INSUFFICIENT_ESSENCE,
 };
 
 bool32 Rogue_MonCanBeUpgraded(u16 species);
@@ -27,7 +35,8 @@ bool32 Rogue_GetUpgradeTypes(u16 species, enum Type *type1, enum Type *type2);
 bool32 Rogue_GetUpgradeStatBuffs(u16 species, s16 *buffsOut); // buffsOut: s16[NUM_STATS]
 enum Ability Rogue_GetUpgradedAbility(u16 species, u8 abilityNum);
 bool32 Rogue_MoveIsUpgradeUnlock(u16 species, enum Move move);
-void Rogue_ApplyUpgradeEssence(struct Pokemon *mon);
+u8 Rogue_GetUpgradeEssenceCost(u16 species); // returns 0 if not upgradeable
+enum UpgradeApplyResult Rogue_ApplyUpgradeEssence(struct Pokemon *mon);
 
 // ---------------------------------------------------------------------------
 // Run lifecycle

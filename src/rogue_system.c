@@ -28,6 +28,7 @@ static const struct UpgradeEssenceTableEntry sUpgradeTable[] = {
             .statBuffs = { [STAT_ATK] = 20, [STAT_SPEED] = 15 },
             .newAbilities = { ABILITY_SAND_FORCE, ABILITY_SAND_RUSH, ABILITY_STEADFAST },
             .moveUnlocks = { MOVE_SACRED_FIRE, MOVE_NONE },
+            .essenceCost = 3,
         }
     },
     {
@@ -38,6 +39,7 @@ static const struct UpgradeEssenceTableEntry sUpgradeTable[] = {
             .statBuffs = { [STAT_HP] = 80, [STAT_SPEED] = 100 },
             .newAbilities = { ABILITY_SAND_FORCE, ABILITY_SAND_RUSH, ABILITY_STEADFAST },
             .moveUnlocks = { MOVE_SACRED_FIRE, MOVE_NONE },
+            .essenceCost = 5,
         }
     },
     // Add more entries here
@@ -98,14 +100,30 @@ bool32 Rogue_MoveIsUpgradeUnlock(u16 species, enum Move move)
     return FALSE;
 }
 
-void Rogue_ApplyUpgradeEssence(struct Pokemon *mon)
+u8 Rogue_GetUpgradeEssenceCost(u16 species)
+{
+    const struct UpgradeEssenceEntry *entry = GetUpgradeEntry(species);
+    if (entry == NULL)
+        return 0;
+    return entry->essenceCost;
+}
+
+enum UpgradeApplyResult Rogue_ApplyUpgradeEssence(struct Pokemon *mon)
 {
     u16 species = GetMonData(mon, MON_DATA_SPECIES);
-    if (!Rogue_MonCanBeUpgraded(species))
-        return;
+    const struct UpgradeEssenceEntry *entry = GetUpgradeEntry(species);
+    if (entry == NULL)
+        return UPGRADE_APPLY_NOT_ELIGIBLE;
+
+    if (!CheckBagHasItem(ITEM_UPGRADE_ESSENCE, entry->essenceCost))
+        return UPGRADE_APPLY_INSUFFICIENT_ESSENCE;
+
+    RemoveBagItem(ITEM_UPGRADE_ESSENCE, entry->essenceCost);
+
     u8 val8 = TRUE;
     SetMonData(mon, MON_DATA_IS_UPGRADED, &val8);
     CalculateMonStats(mon);
+    return UPGRADE_APPLY_SUCCESS;
 }
 
 // ---------------------------------------------------------------------------

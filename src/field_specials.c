@@ -5888,9 +5888,10 @@ void Special_BufferRolledAbilityName(void)
 }
 
 // caller sets gSpecialVar_0x8004 to the party slot
+// gSpecialVar_Result returns enum UpgradeApplyResult
 void Special_ApplyUpgradeEssence(void)
 {
-    Rogue_ApplyUpgradeEssence(&gPlayerParty[gSpecialVar_0x8004]);
+    gSpecialVar_Result = Rogue_ApplyUpgradeEssence(&gPlayerParty[gSpecialVar_0x8004]);
 }
 
 // caller sets gSpecialVar_0x8004 to the party slot
