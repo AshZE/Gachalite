@@ -80,6 +80,7 @@
 #include "constants/party_menu.h"
 #include "constants/rgb.h"
 #include "constants/songs.h"
+#include "rogue_system.h"
 
 enum {
     MENU_SUMMARY,
@@ -4889,7 +4890,43 @@ void Task_AbilityCapsule(u8 taskId)
         }
         gPartyMenuUseExitCallback = TRUE;
         GetMonNickname(&gPlayerParty[tMonId], gStringVar1);
-        StringCopy(gStringVar2, gAbilitiesInfo[GetAbilityBySpecies(tSpecies, tAbilityNum)].name);
+        static void SetMonTypeIcons(void)
+{
+    eaum Type type1, type2, t1, t2;
+    struct PokeSummary *summary = &sMonSummaryScreen->summary;
+    if (summary->isEgg)
+    {
+        SetTypeSpritePosAndPal(TYPE_MYSTERY, 120, 48, SPRITE_ARR_ID_TYPE);
+        SetSpriteInvisibility(SPRITE_ARR_ID_TYPE + 1, TRUE);
+    }
+    else
+    {
+        type1 = GetSpeciesType(summary->species, 0);
+        type2 = GetSpeciesType(summary->species, 1);
+        if (summary->isUpgraded)
+        {
+            if (Rogue_GetUpgradeTypes(summary->species, &t1, &t2))
+            {
+                if (t1 != TYPE_NONE) type1 = t1;
+                if (t2 != TYPE_NONE) type2 = t2;
+            }
+        }
+        SetTypeSpritePosAndPal(type1, 120, 48, SPRITE_ARR_ID_TYPE);
+        if (type1 != type2)
+        {
+            SetTypeSpritePosAndPal(type2, 160, 48, SPRITE_ARR_ID_TYPE + 1);
+            SetSpriteInvisibility(SPRITE_ARR_ID_TYPE + 1, FALSE);
+        }
+        else
+        {
+            SetSpriteInvisibility(SPRITE_ARR_ID_TYPE + 1, TRUE);
+        }
+        if (P_SHOW_TERA_TYPE >= GEN_9)
+        {
+            SetTypeSpritePosAndPal(summary->teraType, 200, 48, SPRITE_ARR_ID_TYPE + 2);
+        }
+    }
+}
         StringExpandPlaceholders(gStringVar4, sText_askText);
         PlaySE(SE_SELECT);
         DisplayPartyMenuMessage(gStringVar4, 1);
@@ -4974,7 +5011,43 @@ void Task_AbilityPatch(u8 taskId)
         }
         gPartyMenuUseExitCallback = TRUE;
         GetMonNickname(&gPlayerParty[tMonId], gStringVar1);
-        StringCopy(gStringVar2, gAbilitiesInfo[GetAbilityBySpecies(tSpecies, tAbilityNum)].name);
+        static void SetMonTypeIcons(void)
+{
+    eaum Type type1, type2, t1, t2;
+    struct PokeSummary *summary = &sMonSummaryScreen->summary;
+    if (summary->isEgg)
+    {
+        SetTypeSpritePosAndPal(TYPE_MYSTERY, 120, 48, SPRITE_ARR_ID_TYPE);
+        SetSpriteInvisibility(SPRITE_ARR_ID_TYPE + 1, TRUE);
+    }
+    else
+    {
+        type1 = GetSpeciesType(summary->species, 0);
+        type2 = GetSpeciesType(summary->species, 1);
+        if (summary->isUpgraded)
+        {
+            if (Rogue_GetUpgradeTypes(summary->species, &t1, &t2))
+            {
+                if (t1 != TYPE_NONE) type1 = t1;
+                if (t2 != TYPE_NONE) type2 = t2;
+            }
+        }
+        SetTypeSpritePosAndPal(type1, 120, 48, SPRITE_ARR_ID_TYPE);
+        if (type1 != type2)
+        {
+            SetTypeSpritePosAndPal(type2, 160, 48, SPRITE_ARR_ID_TYPE + 1);
+            SetSpriteInvisibility(SPRITE_ARR_ID_TYPE + 1, FALSE);
+        }
+        else
+        {
+            SetSpriteInvisibility(SPRITE_ARR_ID_TYPE + 1, TRUE);
+        }
+        if (P_SHOW_TERA_TYPE >= GEN_9)
+        {
+            SetTypeSpritePosAndPal(summary->teraType, 200, 48, SPRITE_ARR_ID_TYPE + 2);
+        }
+    }
+}
         StringExpandPlaceholders(gStringVar4, sText_askText);
         PlaySE(SE_SELECT);
         DisplayPartyMenuMessage(gStringVar4, 1);
