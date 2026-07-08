@@ -1241,6 +1241,7 @@ static void CreatePartyMonSprites(u8 slot)
         CreatePartyMonHeldItemSprite(&gPlayerParty[slot], &sPartyMenuBoxes[slot]);
         CreatePartyMonPokeballSprite(&gPlayerParty[slot], &sPartyMenuBoxes[slot]);
         CreatePartyMonStatusSprite(&gPlayerParty[slot], &sPartyMenuBoxes[slot]);
+        CreatePartyMonUpgradeSprite(&gPlayerParty[slot], &sPartyMenuBoxes[slot]);
     }
 }
 
