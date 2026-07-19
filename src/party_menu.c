@@ -149,6 +149,7 @@ enum {
     TAG_POKEBALL = 1200,
     TAG_POKEBALL_SMALL,
     TAG_STATUS_ICONS,
+    TAG_UPGRADE_ICON,
 };
 
 #define TAG_HELD_ITEM 55120
@@ -211,6 +212,7 @@ struct PartyMenuBox
     u8 itemSpriteId;
     u8 pokeballSpriteId;
     u8 statusSpriteId;
+    u8 upgradeSpriteId;
 };
 
 // EWRAM vars
@@ -285,6 +287,7 @@ static void CreatePartyMonIconSpriteParameterized(u16 species, u32 pid, bool32 i
 static void CreatePartyMonHeldItemSpriteParameterized(u16, enum Item, struct PartyMenuBox *);
 static void CreatePartyMonPokeballSpriteParameterized(u16, struct PartyMenuBox *);
 static void CreatePartyMonStatusSpriteParameterized(u16, u8, struct PartyMenuBox *);
+static void CreatePartyMonUpgradeSprite(struct Pokemon *, struct PartyMenuBox *);
 // These next 4 functions are essentially redundant with the above 4
 // The only difference is that rather than receive the data directly they retrieve it from the mon struct
 static void CreatePartyMonHeldItemSprite(struct Pokemon *, struct PartyMenuBox *);
@@ -4590,6 +4593,82 @@ void LoadPartyMenuAilmentGfx(void)
 {
     LoadCompressedSpriteSheet(&sSpriteSheet_StatusIcons);
     LoadSpritePalette(&sSpritePalette_StatusIcons);
+    LoadCompressedSpriteSheet(&sSpriteSheet_UpgradeIcon);
+    LoadSpritePalette(&sSpritePalette_UpgradeIcon);
+}
+
+// --- Upgrade icon ---
+// Small badge shown at the end of a party mon's nameplate to indicate it has
+// been upgraded (see MON_DATA_IS_UPGRADED / mon->box.isUpgraded).
+//
+// NOTE: gUpgradeIconTiles / gUpgradeIconPal are placeholder graphics symbol
+// names. Add the actual tile/palette data (e.g. via
+// graphics/party_menu/upgrade_icon.png + .pal, wired up the same way as
+// gStatusGfx_Icons / gStatusPal_Icons) before this will compile and display
+// correctly.
+static const struct CompressedSpriteSheet sSpriteSheet_UpgradeIcon =
+{
+    .data = gUpgradeIconTiles,
+    .size = 0x100,
+    .tag = TAG_UPGRADE_ICON
+};
+
+static const struct SpritePalette sSpritePalette_UpgradeIcon =
+{
+    .data = gUpgradeIconPal,
+    .tag = TAG_UPGRADE_ICON
+};
+
+static const struct OamData sOamData_UpgradeIcon =
+{
+    .y = 0,
+    .affineMode = ST_OAM_AFFINE_OFF,
+    .objMode = ST_OAM_OBJ_NORMAL,
+    .mosaic = FALSE,
+    .bpp = ST_OAM_4BPP,
+    .shape = SPRITE_SHAPE(8x8),
+    .x = 0,
+    .matrixNum = 0,
+    .size = SPRITE_SIZE(8x8),
+    .tileNum = 0,
+    .priority = 0,
+    .paletteNum = 0,
+    .affineParam = 0,
+};
+
+static const union AnimCmd sSpriteAnim_UpgradeIcon[] = {
+    ANIMCMD_FRAME(0, 0, FALSE, FALSE),
+    ANIMCMD_END
+};
+
+static const union AnimCmd *const sSpriteAnimTable_UpgradeIcon[] = {
+    sSpriteAnim_UpgradeIcon,
+};
+
+static const struct SpriteTemplate sSpriteTemplate_UpgradeIcon =
+{
+    .tileTag = TAG_UPGRADE_ICON,
+    .paletteTag = TAG_UPGRADE_ICON,
+    .oam = &sOamData_UpgradeIcon,
+    .anims = sSpriteAnimTable_UpgradeIcon,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = SpriteCallbackDummy,
+};
+
+static void CreatePartyMonUpgradeSprite(struct Pokemon *mon, struct PartyMenuBox *menuBox)
+{
+    if (GetMonData(mon, MON_DATA_SPECIES) == SPECIES_NONE)
+        return;
+
+    // Position just past the right edge of the nickname text, on the same
+    // row as the status icon (spriteCoords[4]/[5]), offset further right.
+    menuBox->upgradeSpriteId = CreateSprite(&sSpriteTemplate_UpgradeIcon,
+                                             menuBox->spriteCoords[4] + 24,
+                                             menuBox->spriteCoords[5],
+                                             0);
+    gSprites[menuBox->upgradeSpriteId].oam.priority = 0;
+    gSprites[menuBox->upgradeSpriteId].invisible = (GetMonData(mon, MON_DATA_IS_UPGRADED) == FALSE);
 }
 
 void CB2_ShowPartyMenuForItemUse(void)
