@@ -4589,33 +4589,40 @@ static void UpdatePartyMonAilmentGfx(u8 status, struct PartyMenuBox *menuBox)
     }
 }
 
-void LoadPartyMenuAilmentGfx(void)
-{
-    LoadCompressedSpriteSheet(&sSpriteSheet_StatusIcons);
-    LoadSpritePalette(&sSpritePalette_StatusIcons);
-    LoadCompressedSpriteSheet(&sSpriteSheet_UpgradeIcon);
-    LoadSpritePalette(&sSpritePalette_UpgradeIcon);
-}
-
 // --- Upgrade icon ---
 // Small badge shown at the end of a party mon's nameplate to indicate it has
 // been upgraded (see MON_DATA_IS_UPGRADED / mon->box.isUpgraded).
 //
-// NOTE: gUpgradeIconTiles / gUpgradeIconPal are placeholder graphics symbol
-// names. Add the actual tile/palette data (e.g. via
-// graphics/party_menu/upgrade_icon.png + .pal, wired up the same way as
-// gStatusGfx_Icons / gStatusPal_Icons) before this will compile and display
-// correctly.
-static const struct CompressedSpriteSheet sSpriteSheet_UpgradeIcon =
+// PLACEHOLDER ART: sUpgradeIconTiles/sUpgradeIconPal below are a temporary
+// solid-color 8x8 square (palette index 1, gold) so the build compiles and
+// the feature is visible right away. Replace with real tile/palette data
+// (e.g. graphics/party_menu/upgrade_icon.png + .pal, converted the same way
+// gStatusGfx_Icons / gStatusPal_Icons are) whenever real art is ready --
+// nothing else in this file needs to change to swap it in.
+static const u32 sUpgradeIconTiles[8] =
 {
-    .data = gUpgradeIconTiles,
-    .size = 0x100,
+    0x11111111, 0x11111111, 0x11111111, 0x11111111,
+    0x11111111, 0x11111111, 0x11111111, 0x11111111,
+};
+
+static const u16 sUpgradeIconPal[16] =
+{
+    RGB_BLACK,
+    RGB(31, 26, 5),  // gold
+    RGB_BLACK, RGB_BLACK, RGB_BLACK, RGB_BLACK, RGB_BLACK, RGB_BLACK,
+    RGB_BLACK, RGB_BLACK, RGB_BLACK, RGB_BLACK, RGB_BLACK, RGB_BLACK, RGB_BLACK, RGB_BLACK,
+};
+
+static const struct SpriteSheet sSpriteSheet_UpgradeIcon =
+{
+    .data = sUpgradeIconTiles,
+    .size = sizeof(sUpgradeIconTiles),
     .tag = TAG_UPGRADE_ICON
 };
 
 static const struct SpritePalette sSpritePalette_UpgradeIcon =
 {
-    .data = gUpgradeIconPal,
+    .data = sUpgradeIconPal,
     .tag = TAG_UPGRADE_ICON
 };
 
@@ -4655,6 +4662,14 @@ static const struct SpriteTemplate sSpriteTemplate_UpgradeIcon =
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = SpriteCallbackDummy,
 };
+
+void LoadPartyMenuAilmentGfx(void)
+{
+    LoadCompressedSpriteSheet(&sSpriteSheet_StatusIcons);
+    LoadSpritePalette(&sSpritePalette_StatusIcons);
+    LoadSpriteSheet(&sSpriteSheet_UpgradeIcon);
+    LoadSpritePalette(&sSpritePalette_UpgradeIcon);
+}
 
 static void CreatePartyMonUpgradeSprite(struct Pokemon *mon, struct PartyMenuBox *menuBox)
 {
