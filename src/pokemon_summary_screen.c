@@ -100,12 +100,10 @@
 #define PSS_DATA_WINDOW_EXP 4 // Exp, next level
 
 // Dynamic fields for the Abilities page
-#define PSS_DATA_WINDOW_ABILITY_1_NAME 0
-#define PSS_DATA_WINDOW_ABILITY_1_DESC 1
-#define PSS_DATA_WINDOW_ABILITY_2_NAME 2
-#define PSS_DATA_WINDOW_ABILITY_2_DESC 3
-#define PSS_DATA_WINDOW_ABILITY_3_NAME 4
-#define PSS_DATA_WINDOW_ABILITY_3_DESC 5
+#define PSS_DATA_WINDOW_TRAITS_1 0
+#define PSS_DATA_WINDOW_TRAITS_2 1
+#define PSS_DATA_WINDOW_TRAITS_3 2
+#define PSS_DATA_WINDOW_TRAITS_4 3
 
 // Dynamic fields for the Battle Moves and Contest Moves pages.
 #define PSS_DATA_WINDOW_MOVE_NAMES 0
@@ -285,6 +283,7 @@ static void PrintEggMemo(void);
 static void Task_PrintSkillsPage(u8);
 static void PrintSkillsPageText(void);
 static void PrintHeldItemName(void);
+static void PrintAbilitySlot(u8);
 static void PrintAbilitiesPageText(void);
 static void Task_PrintAbilitiesPage(u8);
 static void PrintRibbonCount(void);
@@ -712,29 +711,21 @@ static const struct WindowTemplate sPageSkillsTemplate[] =
 };
 static const struct WindowTemplate sPageAbilitiesTemplate[] =
 {
-    [PSS_DATA_WINDOW_ABILITY_1_NAME] = {
+    [PSS_DATA_WINDOW_EXTRA_ABILITY_1] = {
         .bg = 0, .tilemapLeft = 11, .tilemapTop = 4,
-        .width = 18, .height = 2, .paletteNum = 6, .baseBlock = 700,
+        .width = 18, .height = 4, .paletteNum = 6, .baseBlock = 700,
     },
-    [PSS_DATA_WINDOW_ABILITY_1_DESC] = {
-        .bg = 0, .tilemapLeft = 11, .tilemapTop = 6,
-        .width = 18, .height = 2, .paletteNum = 6, .baseBlock = 736,
+    [PSS_DATA_WINDOW_EXTRA_ABILITY_2] = {
+        .bg = 0, .tilemapLeft = 11, .tilemapTop = 8,
+        .width = 18, .height = 4, .paletteNum = 6, .baseBlock = 772,
     },
-    [PSS_DATA_WINDOW_ABILITY_2_NAME] = {
-        .bg = 0, .tilemapLeft = 11, .tilemapTop = 9,
-        .width = 18, .height = 2, .paletteNum = 6, .baseBlock = 772,
+    [PSS_DATA_WINDOW_EXTRA_ABILITY_3] = {
+        .bg = 0, .tilemapLeft = 11, .tilemapTop = 12,
+        .width = 18, .height = 4, .paletteNum = 6, .baseBlock = 844,
     },
-    [PSS_DATA_WINDOW_ABILITY_2_DESC] = {
-        .bg = 0, .tilemapLeft = 11, .tilemapTop = 11,
-        .width = 18, .height = 2, .paletteNum = 6, .baseBlock = 808,
-    },
-    [PSS_DATA_WINDOW_ABILITY_3_NAME] = {
-        .bg = 0, .tilemapLeft = 11, .tilemapTop = 14,
-        .width = 18, .height = 2, .paletteNum = 6, .baseBlock = 844,
-    },
-    [PSS_DATA_WINDOW_ABILITY_3_DESC] = {
+    [PSS_DATA_WINDOW_EXTRA_ABILITY_4] = {
         .bg = 0, .tilemapLeft = 11, .tilemapTop = 16,
-        .width = 18, .height = 2, .paletteNum = 6, .baseBlock = 880,
+        .width = 18, .height = 4, .paletteNum = 6, .baseBlock = 916,
     },
 };
 
@@ -1501,7 +1492,7 @@ static bool8 DecompressGraphics(void)
         sMonSummaryScreen->switchCounter++;
         break;
     case 5:
-        DecompressDataWithHeaderWram(gSummaryPage_Abilities_Tilemap, sMonSummaryScreen->bgTilemapBuffers[PSS_PAGE_ABILITIES][1]);
+        DecompressDataWithHeaderWram(gSummaryPage_Traits_Tilemap, sMonSummaryScreen->bgTilemapBuffers[PSS_PAGE_ABILITIES][1]);
         sMonSummaryScreen->switchCounter++;
         break;
     case 6:
@@ -3908,54 +3899,55 @@ static void PrintSkillsPageText(void)
     PrintExpPointsNextLevel();
 }
 
-static void PrintExtraAbilitySlot(u8 slot, u8 nameWindowId, u8 descWindowId)
+static void PrintAbilitySlot(u8 slotIndex)
 {
-    enum Ability ability = sMonSummaryScreen->summary.extraAbilities[slot];
+    enum Ability ability = ABILITY_NONE;
+    struct PokeSummary *sum = &sMonSummaryScreen->summary;
+
+    if (slotIndex == 0)
+    {
+        if (sum->isUpgraded)
+            ability = Rogue_GetUpgradedAbility(sum->species, sum->abilityNum);
+        if (ability == ABILITY_NONE)
+            ability = GetAbilityBySpecies(sum->species, sum->abilityNum);
+    }
+    else if (slotIndex <= MAX_EXTRA_ABILITIES)
+    {
+        ability = sum->extraAbilities[slotIndex - 1];
+    }
+
+    int x = GetStringRightAlignXOffset(FONT_NORMAL, gAbilitiesInfo[ability].name, 18 * 8);
 
     if (ability == ABILITY_NONE)
     {
-        // Print "Ability X" placeholder
-        u8 text[20];
-        u8 *ptr = text;
-        static const u8 sText_AbilityLabel[] = _("Ability ");
-        ptr = StringCopy(ptr, sText_AbilityLabel);
-        *ptr++ = CHAR_1 + slot; // '1', '2', '3'
-        *ptr = EOS;
-        PrintTextOnWindow(AddWindowFromTemplateList(sPageAbilitiesTemplate, nameWindowId), text, 0, 1, 0, 0);
-        PrintTextOnWindow(AddWindowFromTemplateList(sPageAbilitiesTemplate, descWindowId), gText_None, 0, 1, 0, 0);
+        PrintTextOnWindow(AddWindowFromTemplateList(sPageAbilitiesTemplate, slotIndex), gText_None, x, 1, 0, 1);
+        PrintTextOnWindow(AddWindowFromTemplateList(sPageAbilitiesTemplate, slotIndex), gText_None, 0, 17, 0, 0);
     }
     else
     {
-        PrintTextOnWindow(AddWindowFromTemplateList(sPageAbilitiesTemplate, nameWindowId), gAbilitiesInfo[ability].name, 0, 1, 0, 1);
-        PrintTextOnWindow(AddWindowFromTemplateList(sPageAbilitiesTemplate, descWindowId), gAbilitiesInfo[ability].description, 0, 1, 0, 0);
+        PrintTextOnWindow(AddWindowFromTemplateList(sPageAbilitiesTemplate, slotIndex), gAbilitiesInfo[ability].name, x, 1, 0, 1);
+        PrintTextOnWindow(AddWindowFromTemplateList(sPageAbilitiesTemplate, slotIndex), gAbilitiesInfo[ability].description, 0, 17, 0, 0);
     }
 }
 
+#define PSS_ABILITIES_SLOT_COUNT (MAX_EXTRA_ABILITIES + 1)
+
 static void PrintAbilitiesPageText(void)
 {
-    PrintExtraAbilitySlot(0, PSS_DATA_WINDOW_ABILITY_1_NAME, PSS_DATA_WINDOW_ABILITY_1_DESC);
-    PrintExtraAbilitySlot(1, PSS_DATA_WINDOW_ABILITY_2_NAME, PSS_DATA_WINDOW_ABILITY_2_DESC);
-    PrintExtraAbilitySlot(2, PSS_DATA_WINDOW_ABILITY_3_NAME, PSS_DATA_WINDOW_ABILITY_3_DESC);
+    u8 i;
+    for (i = 0; i < PSS_ABILITIES_SLOT_COUNT; i++)
+        PrintAbilitySlot(i);
 }
 
 static void Task_PrintAbilitiesPage(u8 taskId)
 {
     s16 *data = gTasks[taskId].data;
-    switch (data[0])
-    {
-    case 1:
-        PrintExtraAbilitySlot(0, PSS_DATA_WINDOW_ABILITY_1_NAME, PSS_DATA_WINDOW_ABILITY_1_DESC);
-        break;
-    case 2:
-        PrintExtraAbilitySlot(1, PSS_DATA_WINDOW_ABILITY_2_NAME, PSS_DATA_WINDOW_ABILITY_2_DESC);
-        break;
-    case 3:
-        PrintExtraAbilitySlot(2, PSS_DATA_WINDOW_ABILITY_3_NAME, PSS_DATA_WINDOW_ABILITY_3_DESC);
-        break;
-    case 4:
+
+    if (data[0] >= 1 && data[0] <= PSS_ABILITIES_SLOT_COUNT)
+        PrintAbilitySlot(data[0] - 1);
+    else if (data[0] > PSS_ABILITIES_SLOT_COUNT)
         DestroyTask(taskId);
-        return;
-    }
+
     data[0]++;
 }
 

@@ -42,6 +42,29 @@ static const struct UpgradeEssenceTableEntry sUpgradeTable[] = {
             .essenceCost = 5,
         }
     },
+    {
+        SPECIES_SUNKERN,
+        {
+            .newType1 = TYPE_GHOST,
+            .newType2 = TYPE_GROUND,
+            .statBuffs = { [STAT_HP] = 80, [STAT_SPEED] = 100 },
+            .newAbilities = { ABILITY_SAND_FORCE, ABILITY_SAND_RUSH, ABILITY_STEADFAST },
+            .moveUnlocks = { MOVE_SACRED_FIRE, MOVE_NONE },
+            .essenceCost = 5,
+        }
+    },
+    {
+        SPECIES_SUNFLORA,
+        {
+            .newType1 = TYPE_GRASS,
+            .newType2 = TYPE_FIRE,
+            .statBuffs = { [STAT_HP] = 10,[STAT_SPATK] = 10, [STAT_SPEED] = 20 },
+            .newAbilities = { ABILITY_CHLOROPHYLL, ABILITY_SOLAR_POWER, ABILITY_DROUGHT },
+            .moveUnlocks = { MOVE_NONE, MOVE_NONE },
+            .essenceCost = 5,
+        }
+    },
+    
     // Add more entries here
 };
 

@@ -2007,6 +2007,7 @@ extern const u32 gSummaryPage_InfoEgg_Tilemap[];
 extern const u32 gSummaryPage_Skills_Tilemap[];
 extern const u32 gSummaryPage_BattleMoves_Tilemap[];
 extern const u32 gSummaryPage_Abilities_Tilemap[];
+extern const u32 gSummaryPage_Traits_Tilemap[];
 extern const u16 gPPTextPalette[];
 extern const u16 gMoveTypes_Pal[];
 
