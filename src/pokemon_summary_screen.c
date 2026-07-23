@@ -100,10 +100,10 @@
 #define PSS_DATA_WINDOW_EXP 4 // Exp, next level
 
 // Dynamic fields for the Abilities page
-#define PSS_DATA_WINDOW_TRAITS_1 0
-#define PSS_DATA_WINDOW_TRAITS_2 1
-#define PSS_DATA_WINDOW_TRAITS_3 2
-#define PSS_DATA_WINDOW_TRAITS_4 3
+#define PSS_DATA_WINDOW_EXTRA_ABILITY_1 0
+#define PSS_DATA_WINDOW_EXTRA_ABILITY_2 1
+#define PSS_DATA_WINDOW_EXTRA_ABILITY_3 2
+#define PSS_DATA_WINDOW_EXTRA_ABILITY_4 3
 
 // Dynamic fields for the Battle Moves and Contest Moves pages.
 #define PSS_DATA_WINDOW_MOVE_NAMES 0
