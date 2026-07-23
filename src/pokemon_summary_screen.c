@@ -1492,7 +1492,7 @@ static bool8 DecompressGraphics(void)
         sMonSummaryScreen->switchCounter++;
         break;
     case 5:
-        DecompressDataWithHeaderWram(gSummaryPage_Traits_Tilemap, sMonSummaryScreen->bgTilemapBuffers[PSS_PAGE_ABILITIES][1]);
+        DecompressDataWithHeaderWram(gSummaryPage_Abilities_Tilemap, sMonSummaryScreen->bgTilemapBuffers[PSS_PAGE_ABILITIES][1]);
         sMonSummaryScreen->switchCounter++;
         break;
     case 6:
@@ -3920,13 +3920,15 @@ static void PrintAbilitySlot(u8 slotIndex)
 
     if (ability == ABILITY_NONE)
     {
-        PrintTextOnWindow(AddWindowFromTemplateList(sPageAbilitiesTemplate, slotIndex), gText_None, x, 1, 0, 1);
-        PrintTextOnWindow(AddWindowFromTemplateList(sPageAbilitiesTemplate, slotIndex), gText_None, 0, 17, 0, 0);
+        u8 windowId = AddWindowFromTemplateList(sPageAbilitiesTemplate, slotIndex);
+        PrintTextOnWindow(windowId, gText_None, x, 1, 0, 1);
+        PrintTextOnWindow(windowId, gText_None, 0, 17, 0, 0);
     }
     else
     {
-        PrintTextOnWindow(AddWindowFromTemplateList(sPageAbilitiesTemplate, slotIndex), gAbilitiesInfo[ability].name, x, 1, 0, 1);
-        PrintTextOnWindow(AddWindowFromTemplateList(sPageAbilitiesTemplate, slotIndex), gAbilitiesInfo[ability].description, 0, 17, 0, 0);
+        u8 windowId = AddWindowFromTemplateList(sPageAbilitiesTemplate, slotIndex);
+        PrintTextOnWindow(windowId, gAbilitiesInfo[ability].name, x, 1, 0, 1);
+        PrintTextOnWindow(windowId, gAbilitiesInfo[ability].description, 0, 17, 0, 0);
     }
 }
 
