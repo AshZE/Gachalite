@@ -5045,7 +5045,7 @@ static void ShowRelearnPrompt(void)
 {
     u32 currPage = sMonSummaryScreen->currPageIndex;
 
-    if (!ShouldShowMoveRelearner() || !(currPage >= PSS_PAGE_BATTLE_MOVES))
+    if (!ShouldShowMoveRelearner() || !(currPage == PSS_PAGE_BATTLE_MOVES || currPage == PSS_PAGE_CONTEST_MOVES))
     {
         ClearWindowTilemap(PSS_LABEL_WINDOW_PROMPT_RELEARN);
         return;
